@@ -22,7 +22,8 @@ new ColorSetting("myModule", "myColorSetting", {
     name: "My Color Setting",      // The name of the setting in the settings menu
     label: "Color Picker",         // The text label used in the button
     restricted: false,             // Restrict this setting to gamemaster only?
-    defaultColor: "#000000ff"      // The default color of the setting
+    defaultColor: "#000000ff",     // The default color of the setting
+    scope: "client"                // The scope of the setting
 })
 ```
 

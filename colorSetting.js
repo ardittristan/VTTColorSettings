@@ -1,3 +1,5 @@
+// https://github.com/ardittristan/VTTColorSettings
+
 import Picker from "./vanilla-picker.mjs";
 
 var pickerShown = {};
@@ -26,14 +28,15 @@ export default class ColorSetting {
     /**
      * @param  {String} module    The namespace under which the setting/menu is registered
      * @param  {String} key       The key name for the setting under the namespace module
-     * @param  {{name: String, label: String, restricted: Boolean, defaultColor: String}} options   Configuration for setting data
+     * @param  {{name: String, label: String, restricted: Boolean, defaultColor: String, scope: String}} options   Configuration for setting data
      * @example
      * // Add a setting with a color picker
      * new ColorSetting("myModule", "myColorSetting", {
      *   name: "My Color Setting",      // The name of the setting in the settings menu
      *   label: "Color Picker",         // The text label used in the button
      *   restricted: false,             // Restrict this setting to gamemaster only?
-     *   defaultColor: "#000000ff"      // The default color of the setting
+     *   defaultColor: "#000000ff",      // The default color of the setting
+     *   scope: "client"
      * })
      */
     constructor(module, key, options = {}) {
@@ -42,7 +45,8 @@ export default class ColorSetting {
             name: "",
             label: "Color Picker",
             restricted: false,
-            defaultColor: "#000000ff"
+            defaultColor: "#000000ff",
+            scope: "client"
         };
         this.options = { ...this.defaultOptions, ...options };
         this.module = module;
@@ -59,7 +63,7 @@ export default class ColorSetting {
         });
 
         game.settings.register(this.module, this.key, {
-            scope: "client",
+            scope: this.options.scope,
             config: false,
             default: this.options.defaultColor,
             type: String
