@@ -1,6 +1,6 @@
 // https://github.com/ardittristan/VTTColorSettings
 
-import Picker from "./vanilla-picker.mjs";
+import Picker from "./vanilla-picker.min.mjs";
 
 var pickerShown = {};
 var data = {};

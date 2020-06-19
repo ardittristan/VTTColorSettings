@@ -26,6 +26,7 @@ new ColorSetting("myModule", "myColorSetting", {
     scope: "client"                // The scope of the setting
 })
 ```
+
 _Note:_ You need to have your Module/System built in `esmodules` way for `import` to work.
 
 This creates a new setting that you can read with:
