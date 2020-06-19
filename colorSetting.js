@@ -28,15 +28,16 @@ export default class ColorSetting {
     /**
      * @param  {String} module    The namespace under which the setting/menu is registered
      * @param  {String} key       The key name for the setting under the namespace module
-     * @param  {{name: String, label: String, restricted: Boolean, defaultColor: String, scope: String}} options   Configuration for setting data
+     * @param  {{name: String, label: String, restricted: Boolean, defaultColor: String, scope: String, onChange: function(String)}} options   Configuration for setting data
      * @example
      * // Add a setting with a color picker
      * new ColorSetting("myModule", "myColorSetting", {
      *   name: "My Color Setting",      // The name of the setting in the settings menu
      *   label: "Color Picker",         // The text label used in the button
      *   restricted: false,             // Restrict this setting to gamemaster only?
-     *   defaultColor: "#000000ff",      // The default color of the setting
-     *   scope: "client"
+     *   defaultColor: "#000000ff",     // The default color of the setting
+     *   scope: "client",               // The scope of the setting
+     *   onChange: (value) => {}        // A callback function which triggers when the setting is changed
      * })
      */
     constructor(module, key, options = {}) {
@@ -46,7 +47,8 @@ export default class ColorSetting {
             label: "Color Picker",
             restricted: false,
             defaultColor: "#000000ff",
-            scope: "client"
+            scope: "client",
+            onChange: undefined
         };
         this.options = { ...this.defaultOptions, ...options };
         this.module = module;
@@ -62,12 +64,18 @@ export default class ColorSetting {
             restricted: this.options.restricted
         });
 
-        game.settings.register(this.module, this.key, {
+        // add onchange capability
+        this.settingsOptions = {
             scope: this.options.scope,
             config: false,
             default: this.options.defaultColor,
             type: String
-        });
+        };
+        if (this.options.onChange != undefined) {
+            this.settingsOptions = { ...this.settingsOptions, ...{ onChange: this.options.onChange } };
+        }
+
+        game.settings.register(this.module, this.key, this.settingsOptions);
 
         _settingsWatcher(this.module, this.key);
 
