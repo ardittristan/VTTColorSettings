@@ -20,6 +20,7 @@ import ColorSetting from "./colorSetting.js"
 //                  module        key             options
 new ColorSetting("myModule", "myColorSetting", {
     name: "My Color Setting",      // The name of the setting in the settings menu
+    hint: "Click on the button",   // A description of the registered setting and its behavior
     label: "Color Picker",         // The text label used in the button
     restricted: false,             // Restrict this setting to gamemaster only?
     defaultColor: "#000000ff",     // The default color of the setting

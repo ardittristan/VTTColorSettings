@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+* Added hint
+
+*Hopefully I have everything now.*
+
 ## 1.2.0
 
 * Added onChange callback

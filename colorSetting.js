@@ -33,6 +33,7 @@ export default class ColorSetting {
      * // Add a setting with a color picker
      * new ColorSetting("myModule", "myColorSetting", {
      *   name: "My Color Setting",      // The name of the setting in the settings menu
+     *   hint: "Click on the button",   // A description of the registered setting and its behavior
      *   label: "Color Picker",         // The text label used in the button
      *   restricted: false,             // Restrict this setting to gamemaster only?
      *   defaultColor: "#000000ff",     // The default color of the setting
@@ -43,6 +44,7 @@ export default class ColorSetting {
     constructor(module, key, options = {}) {
         if (!initialRun) { runInit(); initialRun = true; }
         this.defaultOptions = {
+            hint: undefined,
             name: "",
             label: "Color Picker",
             restricted: false,
@@ -57,6 +59,7 @@ export default class ColorSetting {
         data[`${this.module}.${this.key}`] = [this.module, this.key, this.options.label];
 
         game.settings.registerMenu(this.module, this.key, {
+            hint: this.options.hint,
             name: this.options.name,
             label: this.options.label,
             icon: 'fas fa-tint',
