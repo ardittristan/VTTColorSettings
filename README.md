@@ -1,6 +1,6 @@
 # VTTColorSettings
 
- adds color picker as settings option in Foundry VTT
+Adds color picker as settings option in Foundry VTT to use as library for module developers.
 
 ## Preview
 
