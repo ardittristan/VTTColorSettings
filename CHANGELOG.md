@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+* Turned library into a module so it doesn't have to be integrated into every module.
+* Fixed gigantic color picker when hint text exists.
+* Old integrated method still works but is deprecated.
+
 ## 1.3.0
 
 * Added hint

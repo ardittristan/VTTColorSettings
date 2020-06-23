@@ -10,15 +10,24 @@ Adds color picker as settings option in Foundry VTT to use as library for module
 
 ## Usage
 
-Copy colorSetting.js into your project, make sure colorSettings.js and vanilla-picker.mjs are in the same folder.
+Install the `lib - Color Settings` (this) module.
+
+*Optional:*  
+Add a tester to your module that checks if color settings is installed and notifies the user if it isn't:
+
+```javascript
+Hooks.once('ready', () => {
+    try{window.Ardittristan.ColorSetting.tester} catch {
+        ui.notifications.notify('Please make sure you have the "lib - ColorSettings" module installed', "error", {permanent: true});
+    }
+});
+```
 
 To make a new color setting, make a new `ColorSetting` object:
 
 ```javascript
-import ColorSetting from "./colorSetting.js"
-
-//                  module        key             options
-new ColorSetting("myModule", "myColorSetting", {
+//                                     module        key             options
+new window.Ardittristan.ColorSetting("myModule", "myColorSetting", {
     name: "My Color Setting",      // The name of the setting in the settings menu
     hint: "Click on the button",   // A description of the registered setting and its behavior
     label: "Color Picker",         // The text label used in the button
@@ -28,8 +37,6 @@ new ColorSetting("myModule", "myColorSetting", {
     onChange: (value) => {}        // A callback function which triggers when the setting is changed
 })
 ```
-
-_Note:_ You need to have your Module/System built in `esmodules` way for `import` to work.
 
 This creates a new setting that you can read with:
 

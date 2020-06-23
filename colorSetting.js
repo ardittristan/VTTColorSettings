@@ -4,7 +4,6 @@ import Picker from "./vanilla-picker.min.mjs";
 
 var pickerShown = {};
 var data = {};
-var initialRun = false;
 
 function runInit() {
     console.log("ColorSettings | initializing");
@@ -22,6 +21,20 @@ function runInit() {
             return app.render(true);
         }
     };
+}
+
+function registerInitVar() {
+    if (window.Ardittristan.initialColorSettingRun != undefined) {
+        return;
+    }
+    window.Ardittristan.initialColorSettingRun = false;
+}
+
+function registerClass() {
+    if (window.Ardittristan.ColorSetting) {
+        return;
+    }
+    window.Ardittristan.ColorSetting = ColorSetting;
 }
 
 export default class ColorSetting {
@@ -42,7 +55,7 @@ export default class ColorSetting {
      * })
      */
     constructor(module, key, options = {}) {
-        if (!initialRun) { runInit(); initialRun = true; }
+        if (!window.Ardittristan.initialColorSettingRun) { runInit(); window.Ardittristan.initialColorSettingRun = true; }
         this.defaultOptions = {
             hint: undefined,
             name: "",
@@ -126,7 +139,13 @@ class SettingsForm extends FormApplication {
                 element.style.maxWidth = "100%";
             }
         });
+        /** @type {HTMLElement} */
+        let pickerElement = picker.domElement;
+        if (pickerElement.parentElement.getElementsByClassName('notes')) {
+            jQuery(pickerElement).insertAfter(element);
+        }
         picker.show();
+
         element.style.maxWidth = `${this.label.length * 1.25 + 4.5}%`;
     }
 }
@@ -179,3 +198,7 @@ export function getTextColor(rgbaHex) {
         return 'black';
     }
 }
+
+window.Ardittristan = window.Ardittristan || {};
+registerClass();
+registerInitVar();
