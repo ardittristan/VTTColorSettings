@@ -6,9 +6,9 @@
 	"author": "ardittristan#0001",
 	"esmodules": ["colorSetting.js"],
 	 "socket": true,
-    "url": "",
-    "manifest": "",
-    "download": "",
+    "url": "https://github.com/ardittristan/VTTColorSettings",
+    "manifest": "https://raw.githubusercontent.com/ardittristan/VTTColorSettings/master/module.json",
+    "download": "https://github.com/ardittristan/VTTColorSettings/archive/master.zip",
 	"minimumCoreVersion": "0.5.5",
-	"compatibleCoreVersion": "0.6.2"
+	"compatibleCoreVersion": "0.6.4"
 }
