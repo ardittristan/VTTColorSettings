@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0
+
+* Added eye dropper tool
+* Fixed bug with opening settings while a color picker is already open not resetting opened color pickers.
+* Made color picker closable by clicking button again.
+
 ## 2.0.0
 
 * Turned library into a module so it doesn't have to be integrated into every module.

@@ -1,6 +1,7 @@
 // https://github.com/ardittristan/VTTColorSettings
 
 import Picker from "./vanilla-picker.min.mjs";
+import html2canvas from './html2canvas.esm.min.js';
 
 var pickerShown = {};
 var data = {};
@@ -99,7 +100,6 @@ export default class ColorSetting {
     }
 }
 
-
 class SettingsForm extends FormApplication {
     constructor(event) {
         super();
@@ -107,52 +107,105 @@ class SettingsForm extends FormApplication {
         this.module = this.settings[0];
         this.key = this.settings[1];
         this.label = this.settings[2];
+        this.picker = new Picker();
+        this._getEyeDropper = this._getEyeDropper.bind(this);
     }
 
-    render() {
-        var x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
+    async render() {
+        let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
                 if (element.dataset.key.includes(`${this.module}.${this.key}`)) {
-                    this._showPicker(element);
+                    if (this._showPicker(element)) {
+                        this.picker._domCancel.textContent = " Eye Dropper";
+                        this.picker._domCancel.style.paddingBottom = 0;
+                        this.picker._domCancel.style.paddingTop = 0;
+                        this.picker._domCancel.onclick = () => {
+                            setTimeout(() => {
+                                document.addEventListener("click", this._getEyeDropper, true);
+                            }, 50);
+                        };
+                        console.log(this.picker);
+                        jQuery("div.picker_cancel").each(function () {
+                            console.log(this.firstChild.firstChild.textContent);
+                            if (this.firstChild.firstChild.textContent === " Eye Dropper") {
+                                let faIcon = document.createElement("i");
+                                faIcon.className = "fas fa-eye-dropper";
+                                this.firstChild.prepend(faIcon);
+                            }
+                        });
+                    }
                 }
-            } catch{ }
+            } catch { }
         }
     }
     /**
      * @param  {Element} element
      */
-    async _showPicker(element) {
-        var picker = new Picker();
-        if (pickerShown[`${this.module}.${this.key}`]) { return; }
-        pickerShown[`${this.module}.${this.key}`] = true;
-        picker.setOptions({
-            parent: element.parentElement,
-            popup: false,
-            color: game.settings.get(this.module, this.key),
-            onDone: (color) => {
-                picker.destroy();
-                pickerShown[`${this.module}.${this.key}`] = false;
-                game.settings.set(this.module, this.key, color.hex);
-                element.style.backgroundColor = color.hex;
-                element.style.color = getTextColor(color.hex);
-                element.style.maxWidth = "100%";
+    _showPicker(element) {
+        if (pickerShown[`${this.module}.${this.key}`]) {
+            let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
+            for (let pickerElement of x) {
+                try {
+                    if (pickerElement.dataset.key.includes(`${this.module}.${this.key}`)) {
+                        pickerElement.parentElement.removeChild(pickerElement.nextElementSibling);
+                        this.picker.destroy();
+                        pickerShown[`${this.module}.${this.key}`] = false;
+                        element.style.maxWidth = "100%";
+                    }
+                } catch { }
             }
-        });
-        /** @type {HTMLElement} */
-        let pickerElement = picker.domElement;
-        if (pickerElement.parentElement.getElementsByClassName('notes')) {
-            jQuery(pickerElement).insertAfter(element);
-        }
-        picker.show();
+            return false;
+        } else {
+            console.log(this.picker);
+            pickerShown[`${this.module}.${this.key}`] = true;
+            this.picker.setOptions({
+                parent: element.parentElement,
+                popup: false,
+                color: game.settings.get(this.module, this.key),
+                cancelButton: true,
+                onDone: (color) => {
+                    this.picker.destroy();
+                    pickerShown[`${this.module}.${this.key}`] = false;
+                    game.settings.set(this.module, this.key, color.hex);
+                    element.style.backgroundColor = color.hex;
+                    element.style.color = getTextColor(color.hex);
+                    element.style.maxWidth = "100%";
+                }
+            });
+            /** @type {HTMLElement} */
+            let pickerElement = this.picker.domElement;
+            if (pickerElement.parentElement.getElementsByClassName('notes')) {
+                jQuery(pickerElement).insertAfter(element);
+            }
+            this.picker.show();
 
-        element.style.maxWidth = `${this.label.length * 1.25 + 4.5}%`;
+            element.style.maxWidth = `${this.label.length * 1.25 + 4.5}%`;
+            return true;
+        }
+    }
+
+    async _getEyeDropper(event) {
+        let _this = this;
+        event.preventDefault();
+        event.stopPropagation();
+        document.removeEventListener("click", this._getEyeDropper, true);
+        html2canvas(document.body).then(function (canvas) {
+            console.log(event);
+            let x = event.pageX,
+                y = event.pageY,
+                ctx = canvas.getContext('2d');
+
+            const color = [ctx.getImageData(x, y, 1, 1).data[0], ctx.getImageData(x, y, 1, 1).data[1], ctx.getImageData(x, y, 1, 1).data[2], ctx.getImageData(x, y, 1, 1).data[3] / 255];
+            _this.picker.setColor(color);
+        });
     }
 }
 
 // settings formatting watcher
 async function _settingsWatcher(module, key) {
     Hooks.on('renderSettingsConfig', () => {
+        pickerShown = {};
         var x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
@@ -161,7 +214,7 @@ async function _settingsWatcher(module, key) {
                     element.style.backgroundColor = color;
                     element.style.color = getTextColor(color);
                 }
-            } catch{ }
+            } catch { }
         }
     });
 }

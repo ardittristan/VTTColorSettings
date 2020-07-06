@@ -47,3 +47,8 @@ game.settings.get("myModule", "myColorSetting") // Returns color code, eg: "#000
 ## Changelog
 
 Check the [Changelog](https://github.com/ardittristan/VTTColorSettings/blob/master/CHANGELOG.md)
+
+## Libraries used
+
+1. [vanilla-picker](https://github.com/Sphinxxxx/vanilla-picker)
+2. [html2canvas](https://github.com/niklasvh/html2canvas)
