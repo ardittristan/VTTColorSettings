@@ -125,9 +125,7 @@ class SettingsForm extends FormApplication {
                                 document.addEventListener("click", this._getEyeDropper, true);
                             }, 50);
                         };
-                        console.log(this.picker);
                         jQuery("div.picker_cancel").each(function () {
-                            console.log(this.firstChild.firstChild.textContent);
                             if (this.firstChild.firstChild.textContent === " Eye Dropper") {
                                 let faIcon = document.createElement("i");
                                 faIcon.className = "fas fa-eye-dropper";
@@ -157,7 +155,6 @@ class SettingsForm extends FormApplication {
             }
             return false;
         } else {
-            console.log(this.picker);
             pickerShown[`${this.module}.${this.key}`] = true;
             this.picker.setOptions({
                 parent: element.parentElement,
@@ -191,7 +188,6 @@ class SettingsForm extends FormApplication {
         event.stopPropagation();
         document.removeEventListener("click", this._getEyeDropper, true);
         html2canvas(document.body).then(function (canvas) {
-            console.log(event);
             let x = event.pageX,
                 y = event.pageY,
                 ctx = canvas.getContext('2d');
