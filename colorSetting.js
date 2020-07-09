@@ -38,6 +38,9 @@ function registerClass() {
     window.Ardittristan.ColorSetting = ColorSetting;
 }
 
+
+
+
 export default class ColorSetting {
     /**
      * @param  {String} module    The namespace under which the setting/menu is registered
@@ -100,6 +103,9 @@ export default class ColorSetting {
     }
 }
 
+
+
+
 class SettingsForm extends FormApplication {
     constructor(event) {
         super();
@@ -125,7 +131,7 @@ class SettingsForm extends FormApplication {
                                 document.addEventListener("click", this._getEyeDropper, true);
                             }, 50);
                         };
-                        jQuery("div.picker_cancel").each(function () {
+                        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
                             if (this.firstChild.firstChild.textContent === " Eye Dropper") {
                                 let faIcon = document.createElement("i");
                                 faIcon.className = "fas fa-eye-dropper";
@@ -197,6 +203,103 @@ class SettingsForm extends FormApplication {
         });
     }
 }
+
+
+
+
+class colorPickerInput extends HTMLInputElement {
+    constructor(...args) {
+        super(...args);
+        // this.value = text in input box
+        this.picker = undefined;
+        this.working = false;
+        this._getEyeDropper = this._getEyeDropper.bind(this);
+        this._makePicker = this._makePicker.bind(this);
+        let _this = this;
+        if (this.id === "permanent") {
+            if (!_this.working) {
+                this._makePicker("picker_inline");
+            }
+        }
+        else {
+            this.addEventListener("focusin", () => {
+                if (!_this.working) {
+                    this._makePicker("picker_popin");
+                }
+            });
+
+            this.addEventListener("focusout", () => {
+                setTimeout(() => {
+                    if (!_this.working) {
+                        _this.picker.destroy();
+                    }
+                }, 100);
+            });
+        }
+    }
+
+    _makePicker(pickerClass) {
+        this.picker = new Picker();
+        this.picker.setOptions({
+            popup: false,
+            parent: this.parentElement,
+            cancelButton: true,
+            onDone: (color) => {
+                this.value = color.hex;
+            }
+        });
+        if (this.picker._domCancel) {
+            this.picker._domCancel.textContent = " Eye Dropper";
+            this.picker._domCancel.style.paddingBottom = 0;
+            this.picker._domCancel.style.paddingTop = 0;
+            this.picker._domCancel.onclick = () => {
+                this.working = true;
+                setTimeout(() => {
+                    document.addEventListener("click", this._getEyeDropper, true);
+                }, 50);
+            };
+        }
+
+        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) != null) {
+            this.picker.setColor(this.value, true);
+        }
+        jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
+
+        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
+            if (this.firstChild.firstChild.textContent === " Eye Dropper") {
+                let faIcon = document.createElement("i");
+                faIcon.className = "fas fa-eye-dropper";
+                this.firstChild.prepend(faIcon);
+            }
+        });
+    }
+
+    async _getEyeDropper(event) {
+        let _this = this;
+        event.preventDefault();
+        event.stopPropagation();
+        document.removeEventListener("click", this._getEyeDropper, true);
+        html2canvas(document.body).then(function (canvas) {
+            let x = event.pageX,
+                y = event.pageY,
+                ctx = canvas.getContext('2d');
+
+            const color = [ctx.getImageData(x, y, 1, 1).data[0], ctx.getImageData(x, y, 1, 1).data[1], ctx.getImageData(x, y, 1, 1).data[2], ctx.getImageData(x, y, 1, 1).data[3] / 255];
+            _this.picker.setColor(color);
+            _this.focus();
+            setTimeout(() => {
+                _this.working = false;
+            }, 50);
+        });
+    }
+};
+
+customElements.define('colorpicker-input', colorPickerInput, {
+    extends: 'input'
+});
+
+
+
 
 // settings formatting watcher
 async function _settingsWatcher(module, key) {
