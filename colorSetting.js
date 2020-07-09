@@ -121,7 +121,8 @@ class SettingsForm extends FormApplication {
         let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
-                if (element.dataset.key.includes(`${this.module}.${this.key}`)) {
+                console.log(element.dataset.key)
+                if (element.dataset.key === `${this.module}.${this.key}`) {
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " Eye Dropper";
                         this.picker._domCancel.style.paddingBottom = 0;
@@ -151,7 +152,7 @@ class SettingsForm extends FormApplication {
             let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
             for (let pickerElement of x) {
                 try {
-                    if (pickerElement.dataset.key.includes(`${this.module}.${this.key}`)) {
+                    if (pickerElement.dataset.key === `${this.module}.${this.key}`) {
                         pickerElement.parentElement.removeChild(pickerElement.nextElementSibling);
                         this.picker.destroy();
                         pickerShown[`${this.module}.${this.key}`] = false;
@@ -308,7 +309,7 @@ async function _settingsWatcher(module, key) {
         var x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
-                if (element.dataset.key.includes(`${module}.${key}`)) {
+                if (element.dataset.key === `${module}.${key}`) {
                     const color = game.settings.get(module, key);
                     element.style.backgroundColor = color;
                     element.style.color = getTextColor(color);
