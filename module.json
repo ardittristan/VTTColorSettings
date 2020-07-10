@@ -1,8 +1,8 @@
 {
 	"name": "colorsettings",
 	"title": "lib - Color Settings",
-	"description": "Library that allows modules to add color settings.",
-	"version": "2.1.1",
+	"description": "Library that allows modules to add color settings and forms.",
+	"version": "2.2.0",
 	"author": "ardittristan#0001",
 	"esmodules": ["colorSetting.js"],
 	 "socket": true,

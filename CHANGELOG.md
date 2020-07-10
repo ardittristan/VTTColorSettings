@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0
+
+* Added color picker to use in forms.
+* Fixed settings not being reset to default when button pressed.
+* Fixed issue when one setting name was the same as the beginning of another setting name.  
+~~Will fix tidyUI styling issues later, it's 4am and I'm tired~~
+
 ## 2.1.1
 
 * Forgot to remove some logs.

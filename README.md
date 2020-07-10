@@ -1,6 +1,6 @@
 # VTTColorSettings
 
-Adds color picker as settings option in Foundry VTT to use as library for module developers.
+Adds color picker as settings option and form option in Foundry VTT to use as library for module developers.
 
 ## Preview
 
@@ -23,6 +23,10 @@ Hooks.once('ready', () => {
 });
 ```
 
+&nbsp;
+
+### Setting
+
 To make a new color setting, make a new `ColorSetting` object:
 
 ```javascript
@@ -43,6 +47,21 @@ This creates a new setting that you can read with:
 ```javascript
 game.settings.get("myModule", "myColorSetting") // Returns color code, eg: "#000000ff"
 ```
+
+&nbsp;
+
+### Form
+
+To add a color picker to a html form, add `is="colorpicker-input"` to a text input field. If you want it to be a permanently open color picker you can give it the id `permanent`
+
+Example:
+
+```html
+<input type="text" name="clickable" is="colorpicker-input">
+<input type="text" name="alwaysOn" is="colorpicker-input" id="permanent">
+```
+
+When the user clicks the OK button, it puts the color code in the text field in hex8 form (eg: `#123456ff`)
 
 ## Changelog
 
