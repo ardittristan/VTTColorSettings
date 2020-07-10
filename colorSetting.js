@@ -97,7 +97,7 @@ export default class ColorSetting {
 
         game.settings.register(this.module, this.key, this.settingsOptions);
 
-        _settingsWatcher(this.module, this.key);
+        _settingsWatcher(this);
 
         pickerShown[`${this.module}.${this.key}`] = false;
     }
@@ -121,7 +121,6 @@ class SettingsForm extends FormApplication {
         let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
-                console.log(element.dataset.key)
                 if (element.dataset.key === `${this.module}.${this.key}`) {
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " Eye Dropper";
@@ -303,24 +302,37 @@ customElements.define('colorpicker-input', colorPickerInput, {
 
 
 // settings formatting watcher
-async function _settingsWatcher(module, key) {
-    Hooks.on('renderSettingsConfig', () => {
+async function _settingsWatcher(_this) {
+    Hooks.on('renderSettingsConfig', (settingsEvent) => {
         pickerShown = {};
         var x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
-                if (element.dataset.key === `${module}.${key}`) {
-                    const color = game.settings.get(module, key);
+                if (element.dataset.key === `${_this.module}.${_this.key}`) {
+                    const color = game.settings.get(_this.module, _this.key);
                     element.style.backgroundColor = color;
                     element.style.color = getTextColor(color);
                 }
             } catch { }
         }
+
+        jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("reset")).on('click', () => {
+            if (window.Ardittristan.resettingSettings == undefined || window.Ardittristan.resettingSettings === false) {
+                window.Ardittristan.resettingSettings = true;
+                ui.notifications.notify('Color pickers will reset on save')
+            }
+            jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("submit")).on('click', () => {
+                window.Ardittristan.resettingSettings = false;
+                if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
+                    game.settings.set(_this.module, _this.key, _this.options.defaultColor);
+                }
+            })
+        });
     });
 }
 
 // Hex to rgba
-function _convertHexUnitTo256(hexStr) { return parseInt(hexStr.repeat(2 / hexStr.length), 16); }
+function _convertHexUnitTo256(hexStr) { return parseInt(hexStr.repeat(2 / hexStr.length), 16); };
 
 /**
  * turn hex rgba into rgba string
