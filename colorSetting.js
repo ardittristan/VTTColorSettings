@@ -10,6 +10,7 @@ function runInit() {
     console.log("ColorSettings | initializing");
 
     // monkeypatch the onclick event of settings to allow for more settings types
+    // IMPORTANT: most likely to have compatibility issues with other modules
     SettingsConfig.prototype._onClickSubmenu = function (event) {
         event.preventDefault();
         const menu = game.settings.menus.get(event.currentTarget.dataset.key);
@@ -24,6 +25,7 @@ function runInit() {
     };
 }
 
+// register boolean that checks if the initial run has been done or not.
 function registerInitVar() {
     if (window.Ardittristan.initialColorSettingRun != undefined) {
         return;
@@ -31,6 +33,7 @@ function registerInitVar() {
     window.Ardittristan.initialColorSettingRun = false;
 }
 
+// register class that can be called to add a color setting.
 function registerClass() {
     if (window.Ardittristan.ColorSetting) {
         return;
@@ -59,6 +62,7 @@ export default class ColorSetting {
      * })
      */
     constructor(module, key, options = {}) {
+        // run init
         if (!window.Ardittristan.initialColorSettingRun) { runInit(); window.Ardittristan.initialColorSettingRun = true; }
         this.defaultOptions = {
             hint: undefined,
@@ -73,6 +77,7 @@ export default class ColorSetting {
         this.module = module;
         this.key = key;
 
+        // global list of color setting instances
         data[`${this.module}.${this.key}`] = [this.module, this.key, this.options.label];
 
         game.settings.registerMenu(this.module, this.key, {
@@ -97,8 +102,10 @@ export default class ColorSetting {
 
         game.settings.register(this.module, this.key, this.settingsOptions);
 
+        // add events that happen when the settings window opens
         _settingsWatcher(this);
 
+        // set the picker to not be showing
         pickerShown[`${this.module}.${this.key}`] = false;
     }
 }
@@ -117,18 +124,25 @@ class SettingsForm extends FormApplication {
         this._getEyeDropper = this._getEyeDropper.bind(this);
     }
 
+    /**
+     * @override rendering method into showing a color picker
+     */
     async render() {
         let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
+            // I hate this, but this is a safeguard for if a different module has a menu with the exact same name
             try {
                 if (element.dataset.key === `${this.module}.${this.key}`) {
+                    // check if picker is already shown
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " Eye Dropper";
+                        this.picker._domCancel.title = "No alpha support" //! informs that it doesn't support alpha on hover
                         this.picker._domCancel.onclick = () => {
                             setTimeout(() => {
                                 document.addEventListener("click", this._getEyeDropper, true);
                             }, 50);
                         };
+                        // change cancel button name
                         jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
                             if (this.firstChild.firstChild.textContent === " Eye Dropper") {
                                 let faIcon = document.createElement("i");
@@ -145,10 +159,12 @@ class SettingsForm extends FormApplication {
      * @param  {Element} element
      */
     _showPicker(element) {
+        // check if picker is already shown
         if (pickerShown[`${this.module}.${this.key}`]) {
             let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
             for (let pickerElement of x) {
                 try {
+                    // hide picker
                     if (pickerElement.dataset.key === `${this.module}.${this.key}`) {
                         pickerElement.parentElement.removeChild(pickerElement.nextElementSibling);
                         this.picker.destroy();
@@ -158,7 +174,10 @@ class SettingsForm extends FormApplication {
                 } catch { }
             }
             return false;
-        } else {
+        }
+        // if picker not shown
+        else {
+            // set picker var to be shown
             pickerShown[`${this.module}.${this.key}`] = true;
             this.picker.setOptions({
                 parent: element.parentElement,
@@ -169,34 +188,37 @@ class SettingsForm extends FormApplication {
                     this.picker.destroy();
                     pickerShown[`${this.module}.${this.key}`] = false;
                     game.settings.set(this.module, this.key, color.hex);
+                    // set background color of menu
                     element.style.backgroundColor = color.hex;
                     element.style.color = getTextColor(color.hex);
                     element.style.maxWidth = "100%";
                 }
             });
-            /** @type {HTMLElement} */
+            /** @type {HTMLElement} dom element of picker */
             let pickerElement = this.picker.domElement;
             if (pickerElement.parentElement.getElementsByClassName('notes')) {
+                // make sure picker gets inserted after menu button
                 jQuery(pickerElement).insertAfter(element);
             }
             this.picker.show();
 
             element.style.maxWidth = `${this.label.length * 1.25 + 4.5}%`;
-            return true
+            return true;
         }
     }
 
-    // TODO: add a doesn't do alpha yet on hover.
     async _getEyeDropper(event) {
         let _this = this;
         event.preventDefault();
         event.stopPropagation();
         document.removeEventListener("click", this._getEyeDropper, true);
+        // get canvas from html
         html2canvas(document.body).then(function (canvas) {
             let x = event.pageX,
                 y = event.pageY,
                 ctx = canvas.getContext('2d');
 
+            // get color of mouse position
             const color = [ctx.getImageData(x, y, 1, 1).data[0], ctx.getImageData(x, y, 1, 1).data[1], ctx.getImageData(x, y, 1, 1).data[2], ctx.getImageData(x, y, 1, 1).data[3] / 255];
             _this.picker.setColor(color);
         });
@@ -205,23 +227,25 @@ class SettingsForm extends FormApplication {
 
 
 
-
+// for the html input field
 class colorPickerInput extends HTMLInputElement {
     constructor(...args) {
         super(...args);
-        // this.value = text in input box
         this.picker = undefined;
         this.working = false;
         this._getEyeDropper = this._getEyeDropper.bind(this);
         this._makePicker = this._makePicker.bind(this);
         let _this = this;
+        // check if picker should be always shown.
         if (this.id === "permanent") {
             if (!_this.working) {
                 this._makePicker("picker_inline");
             }
         }
         else {
+            // on focus
             this.addEventListener("focusin", () => {
+                // don't trigger is focus is lost because of eye dropper
                 if (!_this.working) {
                     this._makePicker("picker_popin");
                 }
@@ -249,6 +273,7 @@ class colorPickerInput extends HTMLInputElement {
         });
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " Eye Dropper";
+            this.picker._domCancel.title = "No alpha support" //! informs that it doesn't support alpha on hover
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
@@ -259,8 +284,9 @@ class colorPickerInput extends HTMLInputElement {
             };
         }
 
+        // check if an actual value 
         if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) != null) {
-            this.picker.setColor(this.value, true);
+            this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
         }
         jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
 
@@ -273,7 +299,6 @@ class colorPickerInput extends HTMLInputElement {
         });
     }
 
-    // TODO: add a doesn't do alpha yet on hover.
     async _getEyeDropper(event) {
         let _this = this;
         event.preventDefault();
@@ -308,6 +333,7 @@ async function _settingsWatcher(_this) {
         var x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
         for (let element of x) {
             try {
+                // set color of menu buttons
                 if (element.dataset.key === `${_this.module}.${_this.key}`) {
                     const color = game.settings.get(_this.module, _this.key);
                     element.style.backgroundColor = color;
@@ -316,17 +342,19 @@ async function _settingsWatcher(_this) {
             } catch { }
         }
 
+        // check if cancel button is pressed
         jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("reset")).on('click', () => {
             if (window.Ardittristan.resettingSettings == undefined || window.Ardittristan.resettingSettings === false) {
                 window.Ardittristan.resettingSettings = true;
-                ui.notifications.notify('Color pickers will reset on save')
+                ui.notifications.notify('Color pickers will reset on save');
             }
+            // check if save button is pressed
             jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("submit")).on('click', () => {
                 window.Ardittristan.resettingSettings = false;
                 if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
                     game.settings.set(_this.module, _this.key, _this.options.defaultColor);
                 }
-            })
+            });
         });
     });
 }

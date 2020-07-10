@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.2
+
+* Added info popup that alpha isn't supported with eye dropper.
+* Fixed bug with html color picker textbox parsing.
+* Documentation.
+
 ## 2.2.1
 
 * Some code cleanup
