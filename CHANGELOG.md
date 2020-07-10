@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+
+* Some code cleanup
+
 ## 2.2.0
 
 * Added color picker to use in forms.

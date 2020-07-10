@@ -1,7 +1,7 @@
 // https://github.com/ardittristan/VTTColorSettings
 
-import Picker from "./vanilla-picker.min.mjs";
-import html2canvas from './html2canvas.esm.min.js';
+import Picker from "./lib/vanilla-picker.min.mjs";
+import html2canvas from './lib/html2canvas.esm.min.js';
 
 var pickerShown = {};
 var data = {};
@@ -124,8 +124,6 @@ class SettingsForm extends FormApplication {
                 if (element.dataset.key === `${this.module}.${this.key}`) {
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " Eye Dropper";
-                        this.picker._domCancel.style.paddingBottom = 0;
-                        this.picker._domCancel.style.paddingTop = 0;
                         this.picker._domCancel.onclick = () => {
                             setTimeout(() => {
                                 document.addEventListener("click", this._getEyeDropper, true);
@@ -184,10 +182,11 @@ class SettingsForm extends FormApplication {
             this.picker.show();
 
             element.style.maxWidth = `${this.label.length * 1.25 + 4.5}%`;
-            return true;
+            return true
         }
     }
 
+    // TODO: add a doesn't do alpha yet on hover.
     async _getEyeDropper(event) {
         let _this = this;
         event.preventDefault();
@@ -274,6 +273,7 @@ class colorPickerInput extends HTMLInputElement {
         });
     }
 
+    // TODO: add a doesn't do alpha yet on hover.
     async _getEyeDropper(event) {
         let _this = this;
         event.preventDefault();
