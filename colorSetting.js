@@ -263,11 +263,20 @@ class colorPickerInput extends HTMLInputElement {
 
     _makePicker(pickerClass) {
         this.picker = new Picker();
+
+        // check if an actual value 
+        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
+        }
+        
         this.picker.setOptions({
             popup: false,
             parent: this.parentElement,
             cancelButton: true,
             onDone: (color) => {
+                this.value = color.hex;
+            },
+            onChange: (color) => {
                 this.value = color.hex;
             }
         });
@@ -284,10 +293,7 @@ class colorPickerInput extends HTMLInputElement {
             };
         }
 
-        // check if an actual value 
-        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
-            this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
-        }
+        
         jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
 
         jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {

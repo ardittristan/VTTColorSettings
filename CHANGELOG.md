@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.4
+
+* Fix html picker sometimes not updating color value of input field.
+
 ## 2.2.3
 
 * fixed mistake that caused html pickers to not get the color value of input.
