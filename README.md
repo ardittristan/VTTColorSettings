@@ -63,6 +63,8 @@ Example:
 
 When the user clicks the OK button, it puts the color code in the text field in hex8 form (eg: `#123456ff`)
 
+_A form color picker does not require a `window.Ardittristan.ColorSetting` object since it just outputs to the text input box._
+
 ## Changelog
 
 Check the [Changelog](https://github.com/ardittristan/VTTColorSettings/blob/master/CHANGELOG.md)

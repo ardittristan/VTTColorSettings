@@ -285,7 +285,7 @@ class colorPickerInput extends HTMLInputElement {
         }
 
         // check if an actual value 
-        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) != null) {
+        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
             this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
         }
         jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
