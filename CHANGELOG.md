@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.3
+
+* fixed mistake that caused html pickers to not get the color value of input.
+
 ## 2.2.2
 
 * Added info popup that alpha isn't supported with eye dropper.
