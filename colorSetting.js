@@ -136,7 +136,7 @@ class SettingsForm extends FormApplication {
                     // check if picker is already shown
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " Eye Dropper";
-                        this.picker._domCancel.title = "No alpha support" //! informs that it doesn't support alpha on hover
+                        this.picker._domCancel.title = "No alpha support"; //! informs that it doesn't support alpha on hover
                         this.picker._domCancel.onclick = () => {
                             setTimeout(() => {
                                 document.addEventListener("click", this._getEyeDropper, true);
@@ -232,31 +232,21 @@ class colorPickerInput extends HTMLInputElement {
     constructor(...args) {
         super(...args);
         this.picker = undefined;
-        this.working = false;
         this._getEyeDropper = this._getEyeDropper.bind(this);
         this._makePicker = this._makePicker.bind(this);
+        this.visible = false;
         let _this = this;
         // check if picker should be always shown.
         if (this.id === "permanent") {
-            if (!_this.working) {
-                this._makePicker("picker_inline");
-            }
+            this._makePicker("picker_inline");
         }
         else {
             // on focus
             this.addEventListener("focusin", () => {
-                // don't trigger is focus is lost because of eye dropper
-                if (!_this.working) {
+                if (!this.visible) {
+                    this.visible = true
                     this._makePicker("picker_popin");
                 }
-            });
-
-            this.addEventListener("focusout", () => {
-                setTimeout(() => {
-                    if (!_this.working) {
-                        _this.picker.destroy();
-                    }
-                }, 100);
             });
         }
     }
@@ -268,13 +258,14 @@ class colorPickerInput extends HTMLInputElement {
         if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
             this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
         }
-        
+
         this.picker.setOptions({
             popup: false,
             parent: this.parentElement,
             cancelButton: true,
-            onDone: (color) => {
-                this.value = color.hex;
+            onDone: () => {
+                this.picker.destroy();
+                this.visible = false;
             },
             onChange: (color) => {
                 this.value = color.hex;
@@ -282,14 +273,11 @@ class colorPickerInput extends HTMLInputElement {
         });
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " Eye Dropper";
-            this.picker._domCancel.title = "No alpha support" //! informs that it doesn't support alpha on hover
+            this.picker._domCancel.title = "No alpha support"; //! informs that it doesn't support alpha on hover
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
-                this.working = true;
-                setTimeout(() => {
-                    document.addEventListener("click", this._getEyeDropper, true);
-                }, 50);
+                document.addEventListener("click", this._getEyeDropper, true);
             };
         }
 
@@ -317,10 +305,6 @@ class colorPickerInput extends HTMLInputElement {
 
             const color = [ctx.getImageData(x, y, 1, 1).data[0], ctx.getImageData(x, y, 1, 1).data[1], ctx.getImageData(x, y, 1, 1).data[2], ctx.getImageData(x, y, 1, 1).data[3] / 255];
             _this.picker.setColor(color);
-            _this.focus();
-            setTimeout(() => {
-                _this.working = false;
-            }, 50);
         });
     }
 };

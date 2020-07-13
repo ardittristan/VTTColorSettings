@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.5
+
+* Fix html picker closing when the input in it get's focused.
+
 ## 2.2.4
 
 * Fix html picker sometimes not updating color value of input field.
