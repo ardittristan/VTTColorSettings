@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.6
+
+* Made it that when included into another module instead of being installed as module, it only runs if the main colorpicker module isn't installed.
+
 ## 2.2.5
 
 * Fix html picker closing when the input in it get's focused.

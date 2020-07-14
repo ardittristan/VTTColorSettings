@@ -41,6 +41,15 @@ function registerClass() {
     window.Ardittristan.ColorSetting = ColorSetting;
 }
 
+function registerInput() {
+    if (customElements.get('colorpicker-input') != undefined) {
+        return;
+    }
+    customElements.define('colorpicker-input', colorPickerInput, {
+        extends: 'input'
+    });
+}
+
 
 
 
@@ -244,7 +253,7 @@ class colorPickerInput extends HTMLInputElement {
             // on focus
             this.addEventListener("focusin", () => {
                 if (!this.visible) {
-                    this.visible = true
+                    this.visible = true;
                     this._makePicker("picker_popin");
                 }
             });
@@ -281,7 +290,7 @@ class colorPickerInput extends HTMLInputElement {
             };
         }
 
-        
+
         jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
 
         jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
@@ -308,10 +317,6 @@ class colorPickerInput extends HTMLInputElement {
         });
     }
 };
-
-customElements.define('colorpicker-input', colorPickerInput, {
-    extends: 'input'
-});
 
 
 
@@ -382,6 +387,25 @@ export function getTextColor(rgbaHex) {
     }
 }
 
-window.Ardittristan = window.Ardittristan || {};
-registerClass();
-registerInitVar();
+/**
+ * @returns {String} script location
+ */
+function getRunningScript() {
+    return () => {
+        return new Error().stack.match(/([^ \n])*([a-z]*:\/\/\/?)*?[a-z0-9\/\\]*\.js/ig)[0];
+    };
+}
+
+Hooks.once('init', function() {
+    /** @type {String} */
+    const scriptLocation = getRunningScript()();
+    
+    if (!scriptLocation.includes("modules/colorsettings/colorSetting.js") && game.modules.get("colorsettings").active) {
+        return;
+    }
+
+    window.Ardittristan = window.Ardittristan || {};
+    registerInput();
+    registerClass();
+    registerInitVar();
+});

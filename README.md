@@ -23,6 +23,29 @@ Hooks.once('ready', () => {
 });
 ```
 
+<details>
+
+<summary>Using Color Settings as integrated library.</summary>
+
+While it is not recommended to, you can use colorsettings as integrated library in your module. When ran as integrated library, colorsettings only runs if the main colorsettings module isn't enabled/installed.
+
+To install colorsettings as an integrated library, you can import the `colorSettings.js`file, `css`folder and `lib`folder into your project.
+
+Make sure the `css` and `lib` folders are in the same directory as the `colorSettings.js` file.
+
+To make the integrated library work, you'll have to add/merge _(with your own file locations)_:
+
+```json
+"esmodules": ["./lib/colorsettings/colorSetting.js"],
+"styles": [ "./lib/colorsettings/css/colorpicker.css" ]
+```
+
+to your `module.json`.
+
+Please do inform your users in some way that they can install colorsettings as a module so they'll have the latest version of the library instead of the included version in your module.
+
+</details>
+
 &nbsp;
 
 ### Setting
