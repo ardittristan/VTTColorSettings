@@ -399,7 +399,7 @@ function getRunningScript() {
 Hooks.once('init', function() {
     /** @type {String} */
     const scriptLocation = getRunningScript()();
-    
+    console.log(scriptLocation)
     if (!scriptLocation.includes("modules/colorsettings/colorSetting.js") && game.modules.get("colorsettings").active) {
         return;
     }
