@@ -399,13 +399,14 @@ function getRunningScript() {
 Hooks.once('init', function() {
     /** @type {String} */
     const scriptLocation = getRunningScript()();
-    console.log(scriptLocation)
-    if (!scriptLocation.includes("modules/colorsettings/colorSetting.js") && game.modules.get("colorsettings").active) {
+    if (!scriptLocation.includes("modules/colorsettings/") && game.modules.get("colorsettings").active) {
         return;
     }
+    
+    window.Ardittristan = window.Ardittristan || {};
+    registerInput();
+    registerClass();
+    registerInitVar();
 });
 
-window.Ardittristan = window.Ardittristan || {};
-registerInput();
-registerClass();
-registerInitVar();
+
