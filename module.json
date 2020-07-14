@@ -7,8 +7,8 @@
 	"esmodules": ["colorSetting.js"],
 	 "socket": true,
     "url": "https://github.com/ardittristan/VTTColorSettings",
-    "manifest": "https://raw.githubusercontent.com/ardittristan/VTTColorSettings/master/module.json",
-    "download": "https://github.com/ardittristan/VTTColorSettings/archive/master.zip",
+    "manifest": "https://raw.githubusercontent.com/ardittristan/VTTColorSettings/2.2.7/module.json",
+    "download": "https://github.com/ardittristan/VTTColorSettings/archive/2.2.7.zip",
 	"minimumCoreVersion": "0.5.5",
 	"compatibleCoreVersion": "0.6.5",
 	"styles": [
