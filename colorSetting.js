@@ -403,9 +403,9 @@ Hooks.once('init', function() {
     if (!scriptLocation.includes("modules/colorsettings/colorSetting.js") && game.modules.get("colorsettings").active) {
         return;
     }
-
-    window.Ardittristan = window.Ardittristan || {};
-    registerInput();
-    registerClass();
-    registerInitVar();
 });
+
+window.Ardittristan = window.Ardittristan || {};
+registerInput();
+registerClass();
+registerInitVar();
