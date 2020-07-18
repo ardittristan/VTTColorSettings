@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0
+
+* Make eye dropper capable of reading from the canvas.
+* Fix alpha not working on html elements
+
 ## 2.2.7
 
 * Fix module not loading on the forge.

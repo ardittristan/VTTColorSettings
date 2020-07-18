@@ -145,7 +145,6 @@ class SettingsForm extends FormApplication {
                     // check if picker is already shown
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " Eye Dropper";
-                        this.picker._domCancel.title = "No alpha support"; //! informs that it doesn't support alpha on hover
                         this.picker._domCancel.onclick = () => {
                             setTimeout(() => {
                                 document.addEventListener("click", this._getEyeDropper, true);
@@ -216,24 +215,11 @@ class SettingsForm extends FormApplication {
         }
     }
 
-    async _getEyeDropper(event) {
-        let _this = this;
-        event.preventDefault();
-        event.stopPropagation();
-        document.removeEventListener("click", this._getEyeDropper, true);
-        // get canvas from html
-        html2canvas(document.body).then(function (canvas) {
-            let x = event.pageX,
-                y = event.pageY,
-                ctx = canvas.getContext('2d');
 
-            // get color of mouse position
-            const color = [ctx.getImageData(x, y, 1, 1).data[0], ctx.getImageData(x, y, 1, 1).data[1], ctx.getImageData(x, y, 1, 1).data[2], ctx.getImageData(x, y, 1, 1).data[3] / 255];
-            _this.picker.setColor(color);
-        });
+    async _getEyeDropper(event) {
+        getEyeDropper(event, this)
     }
 }
-
 
 
 // for the html input field
@@ -282,7 +268,6 @@ class colorPickerInput extends HTMLInputElement {
         });
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " Eye Dropper";
-            this.picker._domCancel.title = "No alpha support"; //! informs that it doesn't support alpha on hover
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
@@ -303,21 +288,56 @@ class colorPickerInput extends HTMLInputElement {
     }
 
     async _getEyeDropper(event) {
-        let _this = this;
-        event.preventDefault();
-        event.stopPropagation();
-        document.removeEventListener("click", this._getEyeDropper, true);
-        html2canvas(document.body).then(function (canvas) {
-            let x = event.pageX,
-                y = event.pageY,
-                ctx = canvas.getContext('2d');
-
-            const color = [ctx.getImageData(x, y, 1, 1).data[0], ctx.getImageData(x, y, 1, 1).data[1], ctx.getImageData(x, y, 1, 1).data[2], ctx.getImageData(x, y, 1, 1).data[3] / 255];
-            _this.picker.setColor(color);
-        });
+        getEyeDropper(event, this)
     }
 };
 
+
+async function getEyeDropper(event, _this) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.removeEventListener("click", _this._getEyeDropper, true);
+
+    if (event.target.id === "board" && event.target.nodeName === "CANVAS") {
+        // extracted page has different bounds
+        let x = event.pageX + 38;
+        let y = event.pageY + 6;
+        // foundry exe compatibility
+        if (navigator.userAgent.includes("FoundryVirtualTabletop")) {
+            [x, y] = [event.pageX, event.pageY];
+        }
+
+        // rerender canvas for fresh data
+        canvas.app.render();
+        let imageCanvas = canvas.app.renderer.plugins.extract.canvas(canvas.stage);
+        let ctx = imageCanvas.getContext('2d');
+        let imageData = ctx.getImageData(x, y, 1, 1).data;
+        let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
+
+        _this.picker.setColor(color);
+
+        imageCanvas.remove()
+    }
+    else {
+        jQuery('canvas#board')[0].setAttribute("data-html2canvas-ignore", "true");
+        html2canvas(document.body, {
+            useCORS: true,
+            removeContainer: true,
+            backgroundColor: 'rgba(0,0,0,0)',
+            onclone: (clonedDoc) => {
+                clonedDoc.body.style.setProperty('background-image', 'unset')
+            }
+        })
+            .then(function (htmlCanvas) {
+                let ctx = htmlCanvas.getContext('2d');
+                document.body.appendChild(htmlCanvas);
+                let imageData = ctx.getImageData(event.pageX, event.pageY, 1, 1).data;
+                let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
+
+                _this.picker.setColor(color);
+            });
+    }
+}
 
 
 
@@ -396,13 +416,13 @@ function getRunningScript() {
     };
 }
 
-Hooks.once('init', function() {
+Hooks.once('init', function () {
     /** @type {String} */
     const scriptLocation = getRunningScript()();
     if (!scriptLocation.includes("modules/colorsettings/") && game.modules.get("colorsettings").active) {
         return;
     }
-    
+
     window.Ardittristan = window.Ardittristan || {};
     registerInput();
     registerClass();
