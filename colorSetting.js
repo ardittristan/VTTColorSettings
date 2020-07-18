@@ -7,7 +7,6 @@ var pickerShown = {};
 var data = {};
 
 function runInit() {
-    console.log("ColorSettings | initializing");
 
     // monkeypatch the onclick event of settings to allow for more settings types
     // IMPORTANT: most likely to have compatibility issues with other modules
@@ -217,7 +216,7 @@ class SettingsForm extends FormApplication {
 
 
     async _getEyeDropper(event) {
-        getEyeDropper(event, this)
+        getEyeDropper(event, this);
     }
 }
 
@@ -288,7 +287,7 @@ class colorPickerInput extends HTMLInputElement {
     }
 
     async _getEyeDropper(event) {
-        getEyeDropper(event, this)
+        getEyeDropper(event, this);
     }
 };
 
@@ -316,7 +315,7 @@ async function getEyeDropper(event, _this) {
 
         _this.picker.setColor(color);
 
-        imageCanvas.remove()
+        imageCanvas.remove();
     }
     else {
         jQuery('canvas#board')[0].setAttribute("data-html2canvas-ignore", "true");
@@ -325,7 +324,7 @@ async function getEyeDropper(event, _this) {
             removeContainer: true,
             backgroundColor: 'rgba(0,0,0,0)',
             onclone: (clonedDoc) => {
-                clonedDoc.body.style.setProperty('background-image', 'unset')
+                clonedDoc.body.style.setProperty('background-image', 'unset');
             }
         })
             .then(function (htmlCanvas) {
@@ -419,8 +418,20 @@ function getRunningScript() {
 Hooks.once('init', function () {
     /** @type {String} */
     const scriptLocation = getRunningScript()();
-    if (!scriptLocation.includes("modules/colorsettings/") && game.modules.get("colorsettings").active) {
-        return;
+    if (!scriptLocation.includes("modules/colorsettings/")) {
+        if (game.modules.get("colorsettings")) {
+            if (game.modules.get("colorsettings").active) {
+                return;
+            }
+        }
+
+        Hooks.once('ready', function() {
+            ui.notifications.notify("A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module.", "warning");
+        })
+        console.log("ColorSettings | initializing fallback mode");
+
+    } else {
+        console.log("ColorSettings | initializing");
     }
 
     window.Ardittristan = window.Ardittristan || {};

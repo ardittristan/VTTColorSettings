@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+* Fix error when library was not installed as module.
+
 ## 2.3.0
 
 * Make eye dropper capable of reading from the canvas.
