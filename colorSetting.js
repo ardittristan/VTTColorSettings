@@ -261,8 +261,8 @@ class colorPickerInput extends HTMLInputElement {
                 this.picker.destroy();
                 this.visible = false;
                 Hooks.call('pickerDone', 
-                    parentElement = this.parentElement,
-                    color = color.hex
+                    this.parentElement,
+                    color.hex
                 )
             },
             onChange: (color) => {

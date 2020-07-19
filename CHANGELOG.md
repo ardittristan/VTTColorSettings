@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.4
+
+* Even hotter fix
+
 ## 2.3.3
 
 * Hotfix
