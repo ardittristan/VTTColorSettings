@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.3
+
+* Hotfix
+
 ## 2.3.2
 
 * Added hook to html picker.
