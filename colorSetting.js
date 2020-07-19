@@ -257,9 +257,13 @@ class colorPickerInput extends HTMLInputElement {
             popup: false,
             parent: this.parentElement,
             cancelButton: true,
-            onDone: () => {
+            onDone: (color) => {
                 this.picker.destroy();
                 this.visible = false;
+                Hooks.call('pickerDone', {
+                    parentElement = this.parentElement,
+                    color = color.hex
+                })
             },
             onChange: (color) => {
                 this.value = color.hex;

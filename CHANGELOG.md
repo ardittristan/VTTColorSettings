@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.2
+
+* Added hook to html picker.
+
 ## 2.3.1
 
 * Fix error when library was not installed as module.
