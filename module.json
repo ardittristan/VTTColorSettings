@@ -8,7 +8,7 @@
 	 "socket": true,
     "url": "https://github.com/ardittristan/VTTColorSettings",
     "manifest": "https://raw.githubusercontent.com/ardittristan/VTTColorSettings/master/module.json",
-    "download": "https://github.com/ardittristan/VTTColorSettings/archive/master.zip",
+    "download": "https://github.com/ardittristan/VTTColorSettings/releases/download/latest/colorSettings.zip",
 	"minimumCoreVersion": "0.5.5",
 	"compatibleCoreVersion": "0.7.0",
 	"styles": [
