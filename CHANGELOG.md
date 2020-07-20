@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.6
+
+* Fix misspell causing download break
+
 ## 2.3.5
 
 * Fix canvas not being removed after color picker use.
