@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.5
+
+* Fix canvas not being removed after color picker use.
+
 ## 2.3.4
 
 * Even hotter fix

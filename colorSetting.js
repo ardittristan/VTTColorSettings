@@ -336,7 +336,7 @@ async function getEyeDropper(event, _this) {
                 document.body.appendChild(htmlCanvas);
                 let imageData = ctx.getImageData(event.pageX, event.pageY, 1, 1).data;
                 let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
-
+                htmlCanvas.remove()
                 _this.picker.setColor(color);
             });
     }
