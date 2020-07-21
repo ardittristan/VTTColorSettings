@@ -75,18 +75,37 @@ game.settings.get("myModule", "myColorSetting") // Returns color code, eg: "#000
 
 ### Form
 
-To add a color picker to a html form, add `is="colorpicker-input"` to a text input field. If you want it to be a permanently open color picker you can give it the id `permanent`
+_A form color picker does not require a `window.Ardittristan.ColorSetting` object since it just outputs to the text input box._
+
+#### Input
+
+To add a color picker to a text field, add `is="colorpicker-input"` to the text field element. If you want the color of the text field to change according to color, you can add the data tag `data-responsive-color` If you want it to be a permanently open color picker you can give it the data tag `data-permanent` (can be combined)
 
 Example:
 
 ```html
 <input type="text" name="clickable" is="colorpicker-input">
-<input type="text" name="alwaysOn" is="colorpicker-input" id="permanent">
+<input type="text" name="alwaysOn" is="colorpicker-input" data-permanent>
+<input type="text" name="colored" is="colorpicker-input" data-responsive-color>
 ```
 
 When the user clicks the OK button, it puts the color code in the text field in hex8 form (eg: `#123456ff`)
 
-_A form color picker does not require a `window.Ardittristan.ColorSetting` object since it just outputs to the text input box._
+#### Button
+
+To add a color picker to a button, add `is="colorpicker-button"` to the button element. If you want the color of the button to change according to color, you can add the data tag `data-responsive-color`
+
+*If you want to get the button value in your form, you should add form="form_id".*
+
+Example:
+
+```html
+<button name="clickable" is="colorpicker-button">
+<button name="forForm" is="colorpicker-button" form="myFormId">
+<button name="colored" is="colorpicker-button" data-responsive-color>
+```
+
+When the user clicks the OK button, it puts the color code in the element's value property in hex8 form (eg: `#123456ff`)
 
 ## Changelog
 

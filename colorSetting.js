@@ -40,12 +40,23 @@ function registerClass() {
     window.Ardittristan.ColorSetting = ColorSetting;
 }
 
+// register text input field
 function registerInput() {
     if (customElements.get('colorpicker-input') != undefined) {
         return;
     }
     customElements.define('colorpicker-input', colorPickerInput, {
         extends: 'input'
+    });
+}
+
+// register button picker
+function registerButton() {
+    if (customElements.get('colorpicker-button') != undefined) {
+        return;
+    }
+    customElements.define('colorpicker-button', colorPickerButton, {
+        extends: 'button'
     });
 }
 
@@ -229,9 +240,8 @@ class colorPickerInput extends HTMLInputElement {
         this._getEyeDropper = this._getEyeDropper.bind(this);
         this._makePicker = this._makePicker.bind(this);
         this.visible = false;
-        let _this = this;
         // check if picker should be always shown.
-        if (this.id === "permanent") {
+        if (/** @deprecated */this.id === "permanent" || this.dataset.permanent !== undefined) {
             this._makePicker("picker_inline");
         }
         else {
@@ -242,6 +252,11 @@ class colorPickerInput extends HTMLInputElement {
                     this._makePicker("picker_popin");
                 }
             });
+        }
+
+        if(this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.style.backgroundColor = this.value
+            this.style.color = getTextColor(this.value)
         }
     }
 
@@ -260,12 +275,16 @@ class colorPickerInput extends HTMLInputElement {
             onDone: (color) => {
                 this.picker.destroy();
                 this.visible = false;
-                Hooks.call('pickerDone', 
+                Hooks.call('pickerDone',
                     this.parentElement,
                     color.hex
-                )
+                );
             },
             onChange: (color) => {
+                if (this.dataset.responsiveColor !== undefined) {
+                    this.style.backgroundColor = color.rgbaString;
+                    this.style.color = getTextColor(color.hex);
+                }
                 this.value = color.hex;
             }
         });
@@ -294,6 +313,85 @@ class colorPickerInput extends HTMLInputElement {
         getEyeDropper(event, this);
     }
 };
+
+class colorPickerButton extends HTMLButtonElement {
+    constructor(...args) {
+        super(...args);
+        this.picker = undefined;
+        this._getEyeDropper = this._getEyeDropper.bind(this);
+        this._makePicker = this._makePicker.bind(this);
+        this.visible = false;
+        // check if picker should be always shown.
+        
+        this.addEventListener("click", (event) => {
+            event.preventDefault()
+            if (!this.visible) {
+                this.visible = true;
+                this._makePicker();
+            }
+        });
+
+        if(this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.style.backgroundColor = this.value
+            this.style.color = getTextColor(this.value)
+        }
+    }
+
+    _makePicker() {
+        this.picker = new Picker();
+
+        // check if an actual value 
+        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
+        }
+
+        this.picker.setOptions({
+            popup: false,
+            parent: this.parentElement,
+            cancelButton: true,
+            onDone: (color) => {
+                
+                this.picker.destroy();
+                this.visible = false;
+                Hooks.call('pickerDone',
+                    this.parentElement,
+                    color.hex
+                );
+            },
+            onChange: (color) => {
+                if (this.dataset.responsiveColor !== undefined) {
+                    this.style.backgroundColor = color.rgbaString;
+                    this.style.color = getTextColor(color.hex);
+                }
+                this.value = color.hex;
+            }
+        });
+
+        jQuery(this.picker.domElement).insertAfter(this)
+
+        if (this.picker._domCancel) {
+            this.picker._domCancel.textContent = " Eye Dropper";
+            this.picker._domCancel.style.paddingBottom = 0;
+            this.picker._domCancel.style.paddingTop = 0;
+            this.picker._domCancel.onclick = () => {
+                document.addEventListener("click", this._getEyeDropper, true);
+            };
+        }
+
+        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
+            if (this.firstChild.firstChild.textContent === " Eye Dropper") {
+                let faIcon = document.createElement("i");
+                faIcon.className = "fas fa-eye-dropper";
+                this.firstChild.prepend(faIcon);
+            }
+        });
+
+    }
+
+    async _getEyeDropper(event) {
+        getEyeDropper(event, this);
+    }
+}
 
 
 async function getEyeDropper(event, _this) {
@@ -336,7 +434,7 @@ async function getEyeDropper(event, _this) {
                 document.body.appendChild(htmlCanvas);
                 let imageData = ctx.getImageData(event.pageX, event.pageY, 1, 1).data;
                 let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
-                htmlCanvas.remove()
+                htmlCanvas.remove();
                 _this.picker.setColor(color);
             });
     }
@@ -429,9 +527,9 @@ Hooks.once('init', function () {
             }
         }
 
-        Hooks.once('ready', function() {
+        Hooks.once('ready', function () {
             ui.notifications.notify("A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module.", "warning");
-        })
+        });
         console.log("ColorSettings | initializing fallback mode");
 
     } else {
@@ -442,6 +540,7 @@ Hooks.once('init', function () {
     registerInput();
     registerClass();
     registerInitVar();
+    registerButton();
 });
 
 

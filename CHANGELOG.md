@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.0
+
+* Deprecated the use of `id="permanent"` in favor of `data-permanent`
+
+***
+
+* Add the option to change the background color of a html element to it's pickers color
+* Add button type color picker
+
 ## 2.3.6
 
 * Fix misspell causing download break
