@@ -1,3 +1,5 @@
+![GitHub Releases](https://img.shields.io/github/downloads/ardittristan/VTTColorSettings/latest/total)
+
 # VTTColorSettings
 
 Adds color picker as settings option and form option in Foundry VTT to use as library for module developers.
