@@ -20,7 +20,7 @@ Add a tester to your module that checks if color settings is installed and notif
 ```javascript
 Hooks.once('ready', () => {
     try{window.Ardittristan.ColorSetting.tester} catch {
-        ui.notifications.notify('Please make sure you have the "lib - ColorSettings" module installed', "error", {permanent: true});
+        ui.notifications.notify('Please make sure you have the "lib - ColorSettings" module installed and enabled.', "error", {permanent: true});
     }
 });
 ```
