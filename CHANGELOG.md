@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.1
+
+* Added one-time popup that asks the user if they want to enable colorsettings if it is installed but not enabled (when running as included library).
+
 ## 2.4.0
 
 * Deprecated the use of `id="permanent"` in favor of `data-permanent`

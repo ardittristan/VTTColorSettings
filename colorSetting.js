@@ -254,9 +254,9 @@ class colorPickerInput extends HTMLInputElement {
             });
         }
 
-        if(this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
-            this.style.backgroundColor = this.value
-            this.style.color = getTextColor(this.value)
+        if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.style.backgroundColor = this.value;
+            this.style.color = getTextColor(this.value);
         }
     }
 
@@ -322,18 +322,18 @@ class colorPickerButton extends HTMLButtonElement {
         this._makePicker = this._makePicker.bind(this);
         this.visible = false;
         // check if picker should be always shown.
-        
+
         this.addEventListener("click", (event) => {
-            event.preventDefault()
+            event.preventDefault();
             if (!this.visible) {
                 this.visible = true;
                 this._makePicker();
             }
         });
 
-        if(this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
-            this.style.backgroundColor = this.value
-            this.style.color = getTextColor(this.value)
+        if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.style.backgroundColor = this.value;
+            this.style.color = getTextColor(this.value);
         }
     }
 
@@ -350,7 +350,7 @@ class colorPickerButton extends HTMLButtonElement {
             parent: this.parentElement,
             cancelButton: true,
             onDone: (color) => {
-                
+
                 this.picker.destroy();
                 this.visible = false;
                 Hooks.call('pickerDone',
@@ -367,7 +367,7 @@ class colorPickerButton extends HTMLButtonElement {
             }
         });
 
-        jQuery(this.picker.domElement).insertAfter(this)
+        jQuery(this.picker.domElement).insertAfter(this);
 
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " Eye Dropper";
@@ -521,9 +521,30 @@ Hooks.once('init', function () {
     /** @type {String} */
     const scriptLocation = getRunningScript()();
     if (!scriptLocation.includes("modules/colorsettings/")) {
-        if (game.modules.get("colorsettings")) {
+        if (game.modules.has("colorsettings")) {
             if (game.modules.get("colorsettings").active) {
                 return;
+            } else {
+                game.settings.register("colorsettings", "autoEnable", {
+                    config: false,
+                    type: Boolean,
+                    default: true
+                })
+                Hooks.once("canvasReady", () => {
+                    if (game.user.isGM && game.settings.get("colorsettings", "autoEnable")) {
+                        Dialog.confirm({
+                            title: "Enable Color Settings module?",
+                            content: "<p>You seem to have Color Settings installed already, do you want to enable it?</p>",
+                            yes: () => game.settings.set("core", ModuleManagement.CONFIG_SETTING, {
+                                ...game.settings.get("core", ModuleManagement.CONFIG_SETTING),
+                                ...{ colorsettings: true }
+                            }),
+                            no: () => game.settings.set("colorsettings", "autoEnable", false),
+                            defaultYes: false
+                        });
+
+                    }
+                });
             }
         }
 
