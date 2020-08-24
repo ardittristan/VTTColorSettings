@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.0
+
+* Added stub method of including library.
+* Made error notification optional.
+* Added compatibility for using libwrapper if found.
+
 ## 2.4.1
 
 * Added one-time popup that asks the user if they want to enable colorsettings if it is installed but not enabled (when running as included library).

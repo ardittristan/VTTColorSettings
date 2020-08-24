@@ -1,4 +1,4 @@
-![GitHub All Releases](https://img.shields.io/badge/dynamic/json?color=green&label=downloads&query=*&url=http%3A%2F%2Faws.ardittristan.xyz%3A9756%2FdownloadCount%2FVTTColorSettings)
+![GitHub All Releases](https://img.shields.io/github/downloads/ardittristan/VTTColorSettings/total)
 
 # VTTColorSettings
 
@@ -20,7 +20,7 @@ Add a tester to your module that checks if color settings is installed and notif
 ```javascript
 Hooks.once('ready', () => {
     try{window.Ardittristan.ColorSetting.tester} catch {
-        ui.notifications.notify('Please make sure you have the "lib - ColorSettings" module installed and enabled.', "error", {permanent: true});
+        ui.notifications.notify('Please make sure you have the "lib - ColorSettings" module installed and enabled.', "error");
     }
 });
 ```
@@ -31,7 +31,7 @@ Hooks.once('ready', () => {
 
 While it is not recommended to, you can use colorsettings as integrated library in your module. When ran as integrated library, colorsettings only runs if the main colorsettings module isn't enabled/installed.
 
-To install colorsettings as an integrated library, you can import the `colorSettings.js`file, `css`folder and `lib`folder into your project.
+To install colorsettings as an integrated library, you can import the `colorSettings.js` file, `css` folder and `lib` folder into your project.
 
 Make sure the `css` and `lib` folders are in the same directory as the `colorSettings.js` file.
 
@@ -48,7 +48,23 @@ Please do inform your users in some way that they can install colorsettings as a
 
 </details>
 
+<details>
+
+<summary>Using Color Settings with a stub if not used as a mandatory library.</summary>
+
+If you want to inform your users that they can use the color picker but your module also works without the library, you can use the `colorSettingStub.js` file. This will show a popup if the library is detected but not enabled. Or a notification if the library is not detected at all. Both the popup and notification can be disabled by the user via a button or the settings.
+
+You will have to add this to your module.json file for it to work _(with your own file locations)_:
+
+```json
+"scripts": ["./lib/colorSettingStub"]
+```
+
+</details>
+
 &nbsp;
+
+_If nothing appears when you click the setting button. Try running with the libwrapper module._
 
 ### Setting
 

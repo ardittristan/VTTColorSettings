@@ -9,19 +9,34 @@ var data = {};
 function runInit() {
 
     // monkeypatch the onclick event of settings to allow for more settings types
-    // IMPORTANT: most likely to have compatibility issues with other modules
-    SettingsConfig.prototype._onClickSubmenu = function (event) {
-        event.preventDefault();
-        const menu = game.settings.menus.get(event.currentTarget.dataset.key);
-        if (!menu) return ui.notifications.error("No submenu found for the provided key");
-        try {
-            const app = new menu.type();
-            return app.render(true);
-        } catch {
-            const app = new menu.type(event);
-            return app.render(true);
-        }
-    };
+    if (typeof libWrapper === "function") {
+        libWrapper.register('colorsettings', 'SettingsConfig.prototype._onClickSubmenu', function (event) {
+            event.preventDefault();
+            const menu = game.settings.menus.get(event.currentTarget.dataset.key);
+            if (!menu) return ui.notifications.error("No submenu found for the provided key");
+            try {
+                const app = new menu.type();
+                return app.render(true);
+            } catch {
+                const app = new menu.type(event);
+                return app.render(true);
+            }
+        }, 'OVERRIDE');
+    } else {
+        // IMPORTANT: most likely to have compatibility issues with other modules
+        SettingsConfig.prototype._onClickSubmenu = function (event) {
+            event.preventDefault();
+            const menu = game.settings.menus.get(event.currentTarget.dataset.key);
+            if (!menu) return ui.notifications.error("No submenu found for the provided key");
+            try {
+                const app = new menu.type();
+                return app.render(true);
+            } catch {
+                const app = new menu.type(event);
+                return app.render(true);
+            }
+        };
+    }
 }
 
 // register boolean that checks if the initial run has been done or not.
@@ -518,9 +533,16 @@ function getRunningScript() {
 }
 
 Hooks.once('init', function () {
+    game.settings.register("colorsettings", "showWarning", {
+        config: true,
+        type: Boolean,
+        default: true,
+        name: "Show Error",
+        hint: "Enable or disable error if main module missing."
+    });
     /** @type {String} */
     const scriptLocation = getRunningScript()();
-    if (!scriptLocation.includes("modules/colorsettings/")) {
+    if (!scriptLocation.includes("modules/colorsettings/") && window?.Ardittristan?.initialColorSettingRun === undefined) {
         if (game.modules.has("colorsettings")) {
             if (game.modules.get("colorsettings").active) {
                 return;
@@ -529,7 +551,7 @@ Hooks.once('init', function () {
                     config: false,
                     type: Boolean,
                     default: true
-                })
+                });
                 Hooks.once("canvasReady", () => {
                     if (game.user.isGM && game.settings.get("colorsettings", "autoEnable")) {
                         Dialog.confirm({
@@ -549,7 +571,9 @@ Hooks.once('init', function () {
         }
 
         Hooks.once('ready', function () {
-            ui.notifications.notify("A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module.", "warning");
+            if (game.settings.get("colorsettings", "showWarning")) {
+                ui.notifications.notify("A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module.", "warning");
+            }
         });
         console.log("ColorSettings | initializing fallback mode");
 
