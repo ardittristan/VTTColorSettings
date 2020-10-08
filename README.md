@@ -1,4 +1,5 @@
 ![GitHub All Releases](https://img.shields.io/github/downloads/ardittristan/VTTColorSettings/total)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-Green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TF3LJHWV9U7HN)
 
 # VTTColorSettings
 
@@ -14,7 +15,7 @@ Adds color picker as settings option and form option in Foundry VTT to use as li
 
 Install the `lib - Color Settings` (this) module.
 
-*Optional:*  
+*Optional:*
 Add a tester to your module that checks if color settings is installed and notifies the user if it isn't:
 
 ```javascript

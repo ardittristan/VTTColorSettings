@@ -9,33 +9,24 @@ var data = {};
 function runInit() {
 
     // monkeypatch the onclick event of settings to allow for more settings types
+    const onClickSubmenuWrapper = function (event) {
+        event.preventDefault();
+        const menu = game.settings.menus.get(event.currentTarget.dataset.key);
+        if (!menu) return ui.notifications.error(compatLocalize("colorSettings.menuError", "No submenu found for the provided key"));
+        try {
+            const app = new menu.type();
+            return app.render(true);
+        } catch {
+            const app = new menu.type(event);
+            return app.render(true);
+        }
+    };
+
     if (typeof libWrapper === "function") {
-        libWrapper.register('colorsettings', 'SettingsConfig.prototype._onClickSubmenu', function (event) {
-            event.preventDefault();
-            const menu = game.settings.menus.get(event.currentTarget.dataset.key);
-            if (!menu) return ui.notifications.error("No submenu found for the provided key");
-            try {
-                const app = new menu.type();
-                return app.render(true);
-            } catch {
-                const app = new menu.type(event);
-                return app.render(true);
-            }
-        }, 'OVERRIDE');
+        libWrapper.register('colorsettings', 'SettingsConfig.prototype._onClickSubmenu', onClickSubmenuWrapper, 'OVERRIDE');
     } else {
         // IMPORTANT: most likely to have compatibility issues with other modules
-        SettingsConfig.prototype._onClickSubmenu = function (event) {
-            event.preventDefault();
-            const menu = game.settings.menus.get(event.currentTarget.dataset.key);
-            if (!menu) return ui.notifications.error("No submenu found for the provided key");
-            try {
-                const app = new menu.type();
-                return app.render(true);
-            } catch {
-                const app = new menu.type(event);
-                return app.render(true);
-            }
-        };
+        SettingsConfig.prototype._onClickSubmenu = onClickSubmenuWrapper;
     }
 }
 
@@ -278,7 +269,7 @@ class colorPickerInput extends HTMLInputElement {
     _makePicker(pickerClass) {
         this.picker = new Picker();
 
-        // check if an actual value 
+        // check if an actual value
         if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
             this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
         }
@@ -304,7 +295,7 @@ class colorPickerInput extends HTMLInputElement {
             }
         });
         if (this.picker._domCancel) {
-            this.picker._domCancel.textContent = " Eye Dropper";
+            this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
@@ -316,7 +307,7 @@ class colorPickerInput extends HTMLInputElement {
         jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
 
         jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-            if (this.firstChild.firstChild.textContent === " Eye Dropper") {
+            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
                 let faIcon = document.createElement("i");
                 faIcon.className = "fas fa-eye-dropper";
                 this.firstChild.prepend(faIcon);
@@ -355,7 +346,7 @@ class colorPickerButton extends HTMLButtonElement {
     _makePicker() {
         this.picker = new Picker();
 
-        // check if an actual value 
+        // check if an actual value
         if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
             this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
         }
@@ -385,7 +376,7 @@ class colorPickerButton extends HTMLButtonElement {
         jQuery(this.picker.domElement).insertAfter(this);
 
         if (this.picker._domCancel) {
-            this.picker._domCancel.textContent = " Eye Dropper";
+            this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
@@ -394,7 +385,7 @@ class colorPickerButton extends HTMLButtonElement {
         }
 
         jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-            if (this.firstChild.firstChild.textContent === " Eye Dropper") {
+            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
                 let faIcon = document.createElement("i");
                 faIcon.className = "fas fa-eye-dropper";
                 this.firstChild.prepend(faIcon);
@@ -477,7 +468,7 @@ async function _settingsWatcher(_this) {
         jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("reset")).on('click', () => {
             if (window.Ardittristan.resettingSettings == undefined || window.Ardittristan.resettingSettings === false) {
                 window.Ardittristan.resettingSettings = true;
-                ui.notifications.notify('Color pickers will reset on save');
+                ui.notifications.notify(compatLocalize("colorSettings.reset", "Color pickers will reset on save"));
             }
             // check if save button is pressed
             jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("submit")).on('click', () => {
@@ -532,13 +523,25 @@ function getRunningScript() {
     };
 }
 
+/**
+ * @param  {String} identifier
+ * @param  {String} fallback
+ */
+function compatLocalize(identifier, fallback) {
+    const translation = game.i18n.localize(identifier)
+    if (translation === identifier) {
+        return fallback;
+    }
+    return translation;
+}
+
 Hooks.once('init', function () {
     game.settings.register("colorsettings", "showWarning", {
         config: true,
         type: Boolean,
         default: true,
-        name: "Show Error",
-        hint: "Enable or disable error if main module missing."
+        name: compatLocalize("colorSettings.showError", "Show Error"),
+        hint: compatLocalize("colorSettings.showErrorHint", "Enable or disable error if main module missing.")
     });
     /** @type {String} */
     const scriptLocation = getRunningScript()();
@@ -555,8 +558,8 @@ Hooks.once('init', function () {
                 Hooks.once("canvasReady", () => {
                     if (game.user.isGM && game.settings.get("colorsettings", "autoEnable")) {
                         Dialog.confirm({
-                            title: "Enable Color Settings module?",
-                            content: "<p>You seem to have Color Settings installed already, do you want to enable it?</p>",
+                            title: compatLocalize("colorSettings.enableDialog", "Enable Color Settings module?"),
+                            content: "<p>" + compatLocalize("colorSettings.enableDialogContent", "You seem to have Color Settings installed already, do you want to enable it?") + "</p>",
                             yes: () => game.settings.set("core", ModuleManagement.CONFIG_SETTING, {
                                 ...game.settings.get("core", ModuleManagement.CONFIG_SETTING),
                                 ...{ colorsettings: true }
@@ -572,7 +575,7 @@ Hooks.once('init', function () {
 
         Hooks.once('ready', function () {
             if (game.settings.get("colorsettings", "showWarning")) {
-                ui.notifications.notify("A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module.", "warning");
+                ui.notifications.notify(compatLocalize("colorSettings.backupWarning", "A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module."), "warning");
             }
         });
         console.log("ColorSettings | initializing fallback mode");
