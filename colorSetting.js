@@ -1,7 +1,9 @@
 // https://github.com/ardittristan/VTTColorSettings
 
 import Picker from "./lib/vanilla-picker.min.mjs";
-import html2canvas from './lib/html2canvas.esm.min.js';
+import _html2canvas from './lib/html2canvas.esm.min.js';
+/** @type {Html2CanvasStatic} */
+const html2canvas = _html2canvas
 
 var pickerShown = {};
 var data = {};
@@ -145,6 +147,7 @@ class SettingsForm extends FormApplication {
         this.module = this.settings[0];
         this.key = this.settings[1];
         this.label = this.settings[2];
+        /** @type {import('vanilla-picker').default} */
         this.picker = new Picker();
         this._getEyeDropper = this._getEyeDropper.bind(this);
     }
@@ -267,6 +270,7 @@ class colorPickerInput extends HTMLInputElement {
     }
 
     _makePicker(pickerClass) {
+        /** @type {import('vanilla-picker').default} */
         this.picker = new Picker();
 
         // check if an actual value
@@ -344,6 +348,7 @@ class colorPickerButton extends HTMLButtonElement {
     }
 
     _makePicker() {
+        /** @type {import('vanilla-picker').default} */
         this.picker = new Picker();
 
         // check if an actual value

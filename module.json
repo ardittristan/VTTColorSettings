@@ -2,7 +2,7 @@
 	"name": "colorsettings",
 	"title": "lib - Color Settings",
 	"description": "Library that allows modules to add color settings and forms.",
-	"version": "2.5.1",
+	"version": "2.5.2",
 	"author": "ardittristan#0001",
 	"esmodules": ["colorSetting.js"],
 	"languages": [
@@ -17,7 +17,7 @@
     "manifest": "https://raw.githubusercontent.com/ardittristan/VTTColorSettings/master/module.json",
     "download": "https://github.com/ardittristan/VTTColorSettings/releases/latest/download/colorSettings.zip",
 	"minimumCoreVersion": "0.5.5",
-	"compatibleCoreVersion": "0.7.0",
+	"compatibleCoreVersion": "0.7.5",
 	"styles": [
 		"./css/colorpicker.css"
 	]

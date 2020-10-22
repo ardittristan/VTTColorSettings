@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.2
+
+* Push compatible core version.
+
 ## 2.5.1
 
 * Add optional translation support.
