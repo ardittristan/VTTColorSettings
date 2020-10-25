@@ -7,6 +7,11 @@
 	"esmodules": ["colorSetting.js"],
 	"languages": [
 		{
+			"lang": "pt-BR",
+			"name": "Português (Brasil)",
+			"path": "langs/pt-BR.json"
+		},
+		{
 			"lang": "en",
 			"name": "English",
 			"path": "lang/en.json"
