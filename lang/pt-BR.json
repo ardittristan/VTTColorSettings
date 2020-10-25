@@ -1,0 +1,12 @@
+{
+  "colorSettings.menuError": "nenhum sub-menu encontrado para esta chave",
+  "colorSettings.dropper": "Conta-gota",
+  "colorSettings.reset": "Cores colhidas serão reiniciadas ao salvar",
+  "colorSettings.showError": "Exibir Erro",
+  "colorSettings.showErrorHint": "Habilitar ou desabilitar erros se o modulo principal não existir.",
+  "colorSettings.enableDialog": "Habilitar o modulo de Definições de Cor?",
+  "colorSettings.enableDialogContent": "Parece que você ja possui o modulo de Definições de Cor, deseja habilita-lo?",
+  "colorSettings.backupWarning": "Um modulo esta rodando um backup da biblioteca de selecionar cor. Para melhores resultados, por favor instale e habilite o modulo Lib-Color Settings.",
+  "colorSettings.init": "DefiniçõesDeCor | inicializando",
+  "colorSettings.fallBackInit": "DefiniçõesDeCor | iniciando em modo recusivo"
+}
