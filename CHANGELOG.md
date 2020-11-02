@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.5
+
+* Add spanish translation.
+
 ## 2.5.4
 
 * Add pt-BR.
