@@ -163,15 +163,17 @@ class SettingsForm extends FormApplication {
                 if (element.dataset.key === `${this.module}.${this.key}`) {
                     // check if picker is already shown
                     if (this._showPicker(element)) {
-                        this.picker._domCancel.textContent = " Eye Dropper";
+                        this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
+                        this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
                         this.picker._domCancel.onclick = () => {
                             setTimeout(() => {
+                                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
                                 document.addEventListener("click", this._getEyeDropper, true);
                             }, 50);
                         };
                         // change cancel button name
                         jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-                            if (this.firstChild.firstChild.textContent === " Eye Dropper") {
+                            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
                                 let faIcon = document.createElement("i");
                                 faIcon.className = "fas fa-eye-dropper";
                                 this.firstChild.prepend(faIcon);
@@ -300,9 +302,11 @@ class colorPickerInput extends HTMLInputElement {
         });
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
+            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
+                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
                 document.addEventListener("click", this._getEyeDropper, true);
             };
         }
@@ -382,9 +386,11 @@ class colorPickerButton extends HTMLButtonElement {
 
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
+            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
+                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
                 document.addEventListener("click", this._getEyeDropper, true);
             };
         }
@@ -409,6 +415,7 @@ async function getEyeDropper(event, _this) {
     event.preventDefault();
     event.stopPropagation();
     document.removeEventListener("click", _this._getEyeDropper, true);
+    _this.picker._domCancel.style.boxShadow = ""
 
     if (event.target.id === "board" && event.target.nodeName === "CANVAS") {
         // extracted page has different bounds

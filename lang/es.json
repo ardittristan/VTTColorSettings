@@ -1,7 +1,7 @@
 {
   "I18N.LANGUAGE": "Español",
   "I18N.MAINTAINERS": "@Viriato139ac#0342",
-  
+
   "colorSettings.menuError": "No se ha encontrado ningún submenú con esa clave",
   "colorSettings.dropper": "Cuentagotas",
   "colorSettings.reset": "Las herramientas de selección de color se reiniciarán al guardar",
@@ -11,5 +11,6 @@
   "colorSettings.enableDialogContent": "Parece que ya tiene instalado Color Settings, ¿desea activarlo?",
   "colorSettings.backupWarning": "Un módulo ha cargado una librería de selección de color de respaldo. Para obtener una mejor experiencia, por favor, instale y active el módulo Lib-Color Settings.",
   "colorSettings.init": "ColorSettings | inicializando",
-  "colorSettings.fallBackInit": "ColorSettings | inicializando modo de recuperación"
+  "colorSettings.fallBackInit": "ColorSettings | inicializando modo de recuperación",
+  "colorSettings.delay": "Puede que el color tarde un poco en aparecer después de hacer clic."
 }

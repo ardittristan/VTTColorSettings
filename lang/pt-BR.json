@@ -8,5 +8,6 @@
   "colorSettings.enableDialogContent": "Parece que você ja possui o modulo de Definições de Cor, deseja habilita-lo?",
   "colorSettings.backupWarning": "Um modulo esta rodando um backup da biblioteca de selecionar cor. Para melhores resultados, por favor instale e habilite o modulo Lib-Color Settings.",
   "colorSettings.init": "DefiniçõesDeCor | inicializando",
-  "colorSettings.fallBackInit": "DefiniçõesDeCor | iniciando em modo recusivo"
+  "colorSettings.fallBackInit": "DefiniçõesDeCor | iniciando em modo recusivo",
+  "colorSettings.delay": "pode levar algum tempo para a cor aparecer após o click"
 }

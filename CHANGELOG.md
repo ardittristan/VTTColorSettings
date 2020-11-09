@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.6
+
+* Make it more clear if color picker is active.
+
 ## 2.5.5
 
 * Add spanish translation.
