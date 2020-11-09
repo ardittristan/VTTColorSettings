@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.5.6
+## 2.5.7
 
 * Make it more clear if color picker is active.
 
