@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.8
+
+* lib-wrapper update [#16](https://github.com/ardittristan/VTTColorSettings/pull/16)
+* update html2canvas to latest.
+
 ## 2.5.7
 
 * Make it more clear if color picker is active.
