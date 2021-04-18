@@ -95,8 +95,12 @@ export default class ColorSetting {
      */
     constructor(module, key, options = {}) {
         // run init
-        if (!window.Ardittristan.initialColorSettingRun) { 
-            runInit(module); 
+        if (!window.Ardittristan.initialColorSettingRun) {
+            const scriptLocation = getRunningScript()();
+            if (!scriptLocation.includes("modules/colorsettings/"))
+                runInit(module);
+            else
+                runInit();
             window.Ardittristan.initialColorSettingRun = true;
         }
         this.defaultOptions = {

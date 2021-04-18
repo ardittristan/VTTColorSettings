@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.9
+
+* hotfix.
+
 ## 2.5.8
 
 * lib-wrapper update [#16](https://github.com/ardittristan/VTTColorSettings/pull/16)
