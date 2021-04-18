@@ -45,7 +45,9 @@ To make the integrated library work, you'll have to add/merge _(with your own fi
 
 to your `module.json`.
 
-You'll also have to replace `"colorsettings"` near [this line](https://github.com/ardittristan/VTTColorSettings/blob/master/colorSetting.js#L28) with the name of your own module, otherwise the lib will not function when ran with libwraper.
+You'll also have to replace `"colorsettings"` near [this line](https://github.com/ardittristan/VTTColorSettings/blob/master/colorSetting.js#L28) with the name of your own module, otherwise the lib will not function when ran with libwraper
+
+For the settings namespace of the `XXX` module it is usually used use the module name `"XXX"` as the settings namespace.This allows you to avoid modifying the [this line](https://github.com/ardittristan/VTTColorSettings/blob/master/colorSetting.js#L28) mentioned above thanks to the addition of a check that verifies if the namespace belongs to a module and register the lib-wrapper module accordingly without needing to modify or integrate this module into your own.
 
 Please do inform your users in some way that they can install colorsettings as a module so they'll have the latest version of the library instead of the included version in your module.
 

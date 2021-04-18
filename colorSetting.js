@@ -8,7 +8,7 @@ const html2canvas = _html2canvas
 var pickerShown = {};
 var data = {};
 
-function runInit() {
+function runInit(moduleName) {
 
     // monkeypatch the onclick event of settings to allow for more settings types
     const onClickSubmenuWrapper = function (event) {
@@ -25,7 +25,12 @@ function runInit() {
     };
 
     if (typeof libWrapper === "function") {
-        libWrapper.register('colorsettings', 'SettingsConfig.prototype._onClickSubmenu', onClickSubmenuWrapper, 'OVERRIDE');
+        // If the namespace is the moduleName no need to touch this file
+        if(moduleName && game.modules.get(moduleName)){
+            libWrapper.register(moduleName, 'SettingsConfig.prototype._onClickSubmenu', onClickSubmenuWrapper, 'OVERRIDE');
+        }else{
+            libWrapper.register('colorsettings', 'SettingsConfig.prototype._onClickSubmenu', onClickSubmenuWrapper, 'OVERRIDE');
+        }
     } else {
         // IMPORTANT: most likely to have compatibility issues with other modules
         SettingsConfig.prototype._onClickSubmenu = onClickSubmenuWrapper;
@@ -90,7 +95,10 @@ export default class ColorSetting {
      */
     constructor(module, key, options = {}) {
         // run init
-        if (!window.Ardittristan.initialColorSettingRun) { runInit(); window.Ardittristan.initialColorSettingRun = true; }
+        if (!window.Ardittristan.initialColorSettingRun) { 
+            runInit(module); 
+            window.Ardittristan.initialColorSettingRun = true;
+        }
         this.defaultOptions = {
             hint: undefined,
             name: "",
