@@ -301,7 +301,8 @@ class colorPickerInput extends HTMLInputElement {
                 this.visible = false;
                 Hooks.call('pickerDone',
                     this.parentElement,
-                    color.hex
+                    color.hex,
+                    this
                 );
                 this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
             },
@@ -382,7 +383,8 @@ class colorPickerButton extends HTMLButtonElement {
                 this.visible = false;
                 Hooks.call('pickerDone',
                     this.parentElement,
-                    color.hex
+                    color.hex,
+                    this
                 );
                 this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
             },

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.0
+
+* implement dom event for html inputs, thanks @mouse0270
+
 ## 2.5.9
 
 * hotfix.
