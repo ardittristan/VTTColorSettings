@@ -303,6 +303,7 @@ class colorPickerInput extends HTMLInputElement {
                     this.parentElement,
                     color.hex
                 );
+                this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
             },
             onChange: (color) => {
                 if (this.dataset.responsiveColor !== undefined) {
@@ -377,13 +378,13 @@ class colorPickerButton extends HTMLButtonElement {
             parent: this.parentElement,
             cancelButton: true,
             onDone: (color) => {
-
                 this.picker.destroy();
                 this.visible = false;
                 Hooks.call('pickerDone',
                     this.parentElement,
                     color.hex
                 );
+                this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
             },
             onChange: (color) => {
                 if (this.dataset.responsiveColor !== undefined) {
