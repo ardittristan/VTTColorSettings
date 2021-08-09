@@ -254,7 +254,6 @@ class SettingsForm extends FormApplication {
     }
 }
 
-
 // for the html input field
 class colorPickerInput extends HTMLInputElement {
     constructor(...args) {
@@ -314,9 +313,11 @@ class colorPickerInput extends HTMLInputElement {
                 this.value = color.hex;
                 
                 // Allow Watching of Color Change
-                if (this.dataset.watchPickerChange !== undefined) {
-                    this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
-                }
+                this.timer = setTimeout(() => {
+                    if (this.dataset.watchPickerChange !== undefined) {
+                        this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
+                    }
+                }, 300);
             }
         });
         if (this.picker._domCancel) {
@@ -401,9 +402,11 @@ class colorPickerButton extends HTMLButtonElement {
                 this.value = color.hex;
                 
                 // Allow Watching of Color Change
-                if (this.dataset.watchPickerChange !== undefined) {
-                    this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
-                }
+                this.timer = setTimeout(() => {
+                    if (this.dataset.watchPickerChange !== undefined) {
+                        this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
+                    }
+                }, 300);
             }
         });
 
