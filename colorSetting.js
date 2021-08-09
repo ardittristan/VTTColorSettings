@@ -312,6 +312,11 @@ class colorPickerInput extends HTMLInputElement {
                     this.style.color = getTextColor(color.hex);
                 }
                 this.value = color.hex;
+                
+                // Allow Watching of Color Change
+                if (this.dataset.watchPickerChange !== undefined) {
+                    this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
+                }
             }
         });
         if (this.picker._domCancel) {
@@ -394,6 +399,11 @@ class colorPickerButton extends HTMLButtonElement {
                     this.style.color = getTextColor(color.hex);
                 }
                 this.value = color.hex;
+                
+                // Allow Watching of Color Change
+                if (this.dataset.watchPickerChange !== undefined) {
+                    this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
+                }
             }
         });
 
