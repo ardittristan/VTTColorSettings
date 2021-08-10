@@ -400,7 +400,7 @@ class colorPickerButton extends HTMLButtonElement {
                     this.style.color = getTextColor(color.hex);
                 }
                 this.value = color.hex;
-                
+
                 // Allow Watching of Color Change
                 this.timer = setTimeout(() => {
                     if (this.dataset.watchPickerChange !== undefined) {
