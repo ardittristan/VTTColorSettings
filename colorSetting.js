@@ -311,13 +311,13 @@ class colorPickerInput extends HTMLInputElement {
                     this.style.color = getTextColor(color.hex);
                 }
                 this.value = color.hex;
-                
+
                 // Allow Watching of Color Change
-                this.timer = setTimeout(() => {
-                    if (this.dataset.watchPickerChange !== undefined) {
-                        this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
-                    }
-                }, 300);
+                if (this.dataset.watchPickerChange !== undefined) {
+                    this.timer = setTimeout(() => {
+                        this.dispatchEvent(new CustomEvent("pickerChange", { detail: color }), { bubbles: true });
+                    }, 300);
+                }
             }
         });
         if (this.picker._domCancel) {
@@ -402,11 +402,11 @@ class colorPickerButton extends HTMLButtonElement {
                 this.value = color.hex;
 
                 // Allow Watching of Color Change
-                this.timer = setTimeout(() => {
-                    if (this.dataset.watchPickerChange !== undefined) {
-                        this.dispatchEvent(new CustomEvent("pickerChange", {detail: color}), {bubbles: true });
-                    }
-                }, 300);
+                if (this.dataset.watchPickerChange !== undefined) {
+                    this.timer = setTimeout(() => {
+                        this.dispatchEvent(new CustomEvent("pickerChange", { detail: color }), { bubbles: true });
+                    }, 300);
+                }
             }
         });
 
