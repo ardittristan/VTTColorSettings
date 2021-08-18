@@ -629,6 +629,7 @@ Hooks.once('init', function () {
     registerClass();
     registerInitVar();
     registerButton();
+    Hooks.callAll("colorSettingsInitialized", window.Ardittristan.ColorSetting);
 });
 
 

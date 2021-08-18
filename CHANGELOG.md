@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.7.0
+
+* add colorSettingsInitialized hook for modules with names starting with characters before c.
+
 ## 2.6.1
 
 * add change event, thanks again @mouse0270
