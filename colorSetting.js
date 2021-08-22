@@ -35,6 +35,43 @@ function runInit(moduleName) {
         // IMPORTANT: most likely to have compatibility issues with other modules
         SettingsConfig.prototype._onClickSubmenu = onClickSubmenuWrapper;
     }
+
+    const origGetTemplate = getTemplate;
+    const getTemplateWrapper = async function (...args) {
+        const path = args[0];
+        if (path === "templates/sidebar/apps/settings-config.html") {
+            if (!_templateCache.hasOwnProperty(path)) {
+              await new Promise((resolve, reject) => {
+                game.socket.emit("template", path, (resp) => {
+                    if (resp.error) return reject(new Error(resp.error));
+                    // inserted code
+                    let html = parseTemplateHtml(resp.html);
+                    // end inserted code
+                    const compiled = Handlebars.compile(html);
+                    Handlebars.registerPartial(path, compiled);
+                    _templateCache[path] = compiled;
+                    console.log(`Foundry VTT | Retrieved and compiled template ${path}`);
+                    resolve(compiled);
+                });
+              });
+            }
+            return _templateCache[path];
+        }
+        else {
+            return await origGetTemplate(...args);
+        }
+    }
+    getTemplate = getTemplateWrapper;
+}
+
+/**
+ * @param  {string} html
+ */
+function parseTemplateHtml (html) {
+    html = html.replace('class="form-group submenu"', 'class="form-group submenu" data-settings-key="{{ this.key }}"');
+    html = html.replace('class="form-group"', 'class="form-group" data-settings-key="{{ this.id }}"');
+
+    return html;
 }
 
 // register boolean that checks if the initial run has been done or not.
@@ -84,13 +121,14 @@ export default class ColorSetting {
      * @example
      * // Add a setting with a color picker
      * new ColorSetting("myModule", "myColorSetting", {
-     *   name: "My Color Setting",      // The name of the setting in the settings menu
-     *   hint: "Click on the button",   // A description of the registered setting and its behavior
-     *   label: "Color Picker",         // The text label used in the button
-     *   restricted: false,             // Restrict this setting to gamemaster only?
-     *   defaultColor: "#000000ff",     // The default color of the setting
-     *   scope: "client",               // The scope of the setting
-     *   onChange: (value) => {}        // A callback function which triggers when the setting is changed
+     *   name: "My Color Setting",          // The name of the setting in the settings menu
+     *   hint: "Click on the button",       // A description of the registered setting and its behavior
+     *   label: "Color Picker",             // The text label used in the button
+     *   restricted: false,                 // Restrict this setting to gamemaster only?
+     *   defaultColor: "#000000ff",         // The default color of the setting
+     *   scope: "client",                   // The scope of the setting
+     *   onChange: (value) => {}            // A callback function which triggers when the setting is changed
+     *   insertAfter: "myModule.mySetting"  // If supplied it will place the setting after the supplied setting
      * })
      */
     constructor(module, key, options = {}) {
@@ -110,7 +148,8 @@ export default class ColorSetting {
             restricted: false,
             defaultColor: "#000000ff",
             scope: "client",
-            onChange: undefined
+            onChange: undefined,
+            insertAfter: undefined,
         };
         this.options = { ...this.defaultOptions, ...options };
         this.module = module;
@@ -492,17 +531,16 @@ async function getEyeDropper(event, _this) {
 async function _settingsWatcher(_this) {
     Hooks.on('renderSettingsConfig', (settingsEvent) => {
         pickerShown = {};
-        var x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
-        for (let element of x) {
-            try {
-                // set color of menu buttons
-                if (element.dataset.key === `${_this.module}.${_this.key}`) {
-                    const color = game.settings.get(_this.module, _this.key);
-                    element.style.backgroundColor = color;
-                    element.style.color = getTextColor(color);
-                }
-            } catch { }
-        }
+        (() => {
+            let element = document.querySelector(`div.settings-list div.form-group.submenu button[data-key="${_this.module}.${_this.key}"]`);
+            const color = game.settings.get(_this.module, _this.key);
+            element.style.backgroundColor = color;
+            element.style.color = getTextColor(color);
+        })();
+
+        if (_this.options.insertAfter)
+            jQuery(`div.settings-list div.form-group.submenu[data-settings-key="${_this.module}.${_this.key}"]`)
+                .insertAfter(jQuery(`div.settings-list div.form-group[data-settings-key="${_this.options.insertAfter}"]`));
 
         // check if cancel button is pressed
         jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("reset")).on('click', () => {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.0
+
+* add parameter that allows for changing the order of the color settings button.
+
 ## 2.7.0
 
 * add colorSettingsInitialized hook for modules with names starting with characters before c.
