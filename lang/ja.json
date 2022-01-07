@@ -1,0 +1,14 @@
+{
+  "Localization Provided By": "Brother Sharp",
+  "colorSettings.menuError": "このキーに対応するサブメニューが見つかりませんでした。",
+  "colorSettings.dropper": "色摘出",
+  "colorSettings.reset": "保存時にカラーピッカーはリセットされます。",
+  "colorSettings.showError": "エラーを表示",
+  "colorSettings.showErrorHint": "メインのModが見つからない時エラーを表示するかどうかを選びます。",
+  "colorSettings.enableDialog": "Color Settingsを有効化しますか？",
+  "colorSettings.enableDialogContent": "既にColor Settingsがインストールされています。有効化しますか？",
+  "colorSettings.backupWarning": "別のModがColor settingsのバックアップライブラリを使用しているようです。競合を避けるため、lib-Color Settingsをインストールして有効化してください。",
+  "colorSettings.init": "ColorSettings | 初期化中",
+  "colorSettings.fallBackInit": "ColorSettings | セーフモードで初期化中",
+  "colorSettings.delay": "クリック後から色が表示されるまでに少し時間がかかる場合があります。"
+}
