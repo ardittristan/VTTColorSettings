@@ -530,9 +530,11 @@ async function getEyeDropper(event, _this) {
 // settings formatting watcher
 async function _settingsWatcher(_this) {
     Hooks.on('renderSettingsConfig', (settingsEvent) => {
+        let element = document.querySelector(`div.settings-list div.form-group.submenu button[data-key="${_this.module}.${_this.key}"]`);
+        if (!element) return;
+
         pickerShown = {};
         (() => {
-            let element = document.querySelector(`div.settings-list div.form-group.submenu button[data-key="${_this.module}.${_this.key}"]`);
             const color = game.settings.get(_this.module, _this.key);
             element.style.backgroundColor = color;
             element.style.color = getTextColor(color);

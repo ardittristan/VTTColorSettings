@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.3
+
+* fix issue when user doesn't have permissions to view settings.
+
 ## 2.8.0
 
 * add parameter that allows for changing the order of the color settings button.
