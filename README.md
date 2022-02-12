@@ -84,7 +84,7 @@ new window.Ardittristan.ColorSetting("myModule", "myColorSetting", {
     restricted: false,                  // Restrict this setting to gamemaster only?
     defaultColor: "#000000ff",          // The default color of the setting
     scope: "client",                    // The scope of the setting
-    onChange: (value) => {}             // A callback function which triggers when the setting is changed
+    onChange: (value) => {},            // A callback function which triggers when the setting is changed
     insertAfter: "myModule.mySetting"   // If supplied it will place the setting after the supplied setting
 })
 ```
