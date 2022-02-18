@@ -545,17 +545,17 @@ async function _settingsWatcher(_this) {
                 .insertAfter(jQuery(`div.settings-list div.form-group[data-settings-key="${_this.options.insertAfter}"]`));
 
         // check if cancel button is pressed
-        jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("reset")).on('click', () => {
+        jQuery(settingsEvent.element[0].querySelector(".sheet-footer button[name=reset]")).on('click', () => {
             if (window.Ardittristan.resettingSettings == undefined || window.Ardittristan.resettingSettings === false) {
                 window.Ardittristan.resettingSettings = true;
                 ui.notifications.notify(compatLocalize("colorSettings.reset", "Color pickers will reset on save"));
             }
             // check if save button is pressed
-            jQuery(settingsEvent.element[0].lastElementChild.firstElementChild.elements.namedItem("submit")).on('click', () => {
-                window.Ardittristan.resettingSettings = false;
-                if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
-                    game.settings.set(_this.module, _this.key, _this.options.defaultColor);
-                }
+            jQuery(settingsEvent.element[0].querySelector(".sheet-footer button[name=submit]")).on("click", () => {
+              window.Ardittristan.resettingSettings = false;
+              if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
+                game.settings.set(_this.module, _this.key, _this.options.defaultColor);
+              }
             });
         });
     });
