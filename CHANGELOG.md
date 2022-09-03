@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.9.0
+
+* update for V10.
+
 ## 2.8.3
 
 * fix issue when user doesn't have permissions to view settings.

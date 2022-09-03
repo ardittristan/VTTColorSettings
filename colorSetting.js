@@ -39,7 +39,7 @@ function runInit(moduleName) {
     const origGetTemplate = getTemplate;
     const getTemplateWrapper = async function (...args) {
         const path = args[0];
-        if (path === "templates/sidebar/apps/settings-config.html") {
+        if (path === "templates/sidebar/apps/settings-config-category.html") {
             if (!_templateCache.hasOwnProperty(path)) {
               await new Promise((resolve, reject) => {
                 game.socket.emit("template", path, (resp) => {
@@ -207,7 +207,7 @@ class SettingsForm extends FormApplication {
      * @override rendering method into showing a color picker
      */
     async render() {
-        let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
+        let x = document.querySelectorAll("#client-settings div.form-group.submenu button");
         for (let element of x) {
             // I hate this, but this is a safeguard for if a different module has a menu with the exact same name
             try {
@@ -241,7 +241,7 @@ class SettingsForm extends FormApplication {
     _showPicker(element) {
         // check if picker is already shown
         if (pickerShown[`${this.module}.${this.key}`]) {
-            let x = document.querySelectorAll("div.settings-list div.form-group.submenu button");
+            let x = document.querySelectorAll("#client-settings div.form-group.submenu button");
             for (let pickerElement of x) {
                 try {
                     // hide picker
@@ -530,7 +530,7 @@ async function getEyeDropper(event, _this) {
 // settings formatting watcher
 async function _settingsWatcher(_this) {
     Hooks.on('renderSettingsConfig', (settingsEvent) => {
-        let element = document.querySelector(`div.settings-list div.form-group.submenu button[data-key="${_this.module}.${_this.key}"]`);
+        let element = document.querySelector(`#client-settings div.form-group.submenu button[data-key="${_this.module}.${_this.key}"]`);
         if (!element) return;
 
         pickerShown = {};
@@ -541,17 +541,17 @@ async function _settingsWatcher(_this) {
         })();
 
         if (_this.options.insertAfter)
-            jQuery(`div.settings-list div.form-group.submenu[data-settings-key="${_this.module}.${_this.key}"]`)
-                .insertAfter(jQuery(`div.settings-list div.form-group[data-settings-key="${_this.options.insertAfter}"]`));
+            jQuery(`#client-settings div.form-group.submenu[data-settings-key="${_this.module}.${_this.key}"]`)
+                .insertAfter(jQuery(`#client-settings div.form-group[data-settings-key="${_this.options.insertAfter}"]`));
 
         // check if cancel button is pressed
-        jQuery(settingsEvent.element[0].querySelector(".sheet-footer button[name=reset]")).on('click', () => {
+        jQuery(settingsEvent.element[0].querySelector("aside button.reset-all")).on('click', () => {
             if (window.Ardittristan.resettingSettings == undefined || window.Ardittristan.resettingSettings === false) {
                 window.Ardittristan.resettingSettings = true;
                 ui.notifications.notify(compatLocalize("colorSettings.reset", "Color pickers will reset on save"));
             }
             // check if save button is pressed
-            jQuery(settingsEvent.element[0].querySelector(".sheet-footer button[name=submit]")).on("click", () => {
+            jQuery(settingsEvent.element[0].querySelector("footer button[type=submit]")).on("click", () => {
               window.Ardittristan.resettingSettings = false;
               if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
                 game.settings.set(_this.module, _this.key, _this.options.defaultColor);
