@@ -16,7 +16,7 @@ console.log(
     moduleVersion: version,
     moduleManifest: manifest,
     moduleChangelog: changelog,
-    moduleMinCore: minCore,
-    moduleCompCore: compCore,
+    moduleMinCore: "" + minCore,
+    moduleCompCore: "" + compCore,
   })
 );
