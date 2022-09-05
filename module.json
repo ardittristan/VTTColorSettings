@@ -1,5 +1,6 @@
 {
   "title": "lib - Color Settings",
+  "name": "colorsettings",
   "description": "Library that allows modules to add color settings and forms.",
   "version": "2.9.0",
   "library": true,
@@ -46,6 +47,8 @@
       "flags": {}
     }
   ],
+  "minimumCoreVersion": "10",
+	"compatibleCoreVersion": "10",
   "compatibility": {
     "minimum": 10,
     "verified": 10
