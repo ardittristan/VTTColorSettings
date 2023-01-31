@@ -149,21 +149,6 @@ When the user clicks the OK button, it puts the color code in the element's valu
   game.modules.get("colorsettings").api.getTextColor: getTextColor(rgbaHex) => String
 
   /**
-   * Little utility to convert a module setting to a simple color picker
-   * the method must be launched on the `renderSettingsConfig"`
-   * e.g.
-   * Hooks.on("renderSettingsConfig", (app, html, data) => {
-   *  colorPicker("tidy5e-sheet", "arrowColor", html);
-   * });
-   *
-   * @param {String} moduleId
-   * @param {String} settingId
-   * @param {HTMLElement} html
-   * @returns
-   */
-  game.modules.get("colorsettings").api.colorPicker(moduleId, settingId, html) => void
-
-  /**
    * Convert a Array of rgba[r, g, b, a] in string format to a hex string
    * @param {String} rgba a Array of rgba[r, g, b, a] as string
    * @param {boolean} forceRemoveAlpha

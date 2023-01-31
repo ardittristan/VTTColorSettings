@@ -16,37 +16,6 @@ const API = {
   getTextColor: getTextColor(rgbaHex),
 
   /**
-   * Little utility to convert a module setting to a simple color picker
-   * the method must be launched on the `renderSettingsConfig"`
-   * e.g.
-   * Hooks.on("renderSettingsConfig", (app, html, data) => {
-   *  colorPicker("tidy5e-sheet", "arrowColor", html);
-   * });
-   *
-   * @param {String} moduleId
-   * @param {String} settingId
-   * @param {HTMLElement} html
-   * @returns
-   */
-  colorPicker(moduleId, settingId, html) {
-    const settingInput = html.find(`input[name="${moduleId}.${settingId}"]`);
-    if (!settingInput.length) {
-      return;
-    }
-    const settingValue = game.settings.get(moduleId, settingId);
-
-    const colorPickerElement = document.createElement("input");
-    colorPickerElement.setAttribute("type", "color");
-    colorPickerElement.setAttribute("data-edit", `${moduleId}.${settingId}`);
-    colorPickerElement.value = settingValue;
-
-    // Add color picker
-    const stringInputElement = html[0].querySelector(`input[name="${moduleId}.${settingId}"]`);
-    stringInputElement.classList.add("color");
-    stringInputElement.after(colorPickerElement);
-  },
-
-  /**
    * Convert a Array of rgba[r, g, b, a] in string format to a hex string
    * @param {String} rgba a Array of rgba[r, g, b, a] as string
    * @param {boolean} forceRemoveAlpha
