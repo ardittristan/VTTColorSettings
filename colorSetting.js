@@ -658,10 +658,10 @@ Hooks.once('init', function () {
                 ui.notifications.notify(compatLocalize("colorSettings.backupWarning", "A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module."), "warning");
             }
         });
-        console.log("ColorSettings | initializing fallback mode");
+        console.log("colorsettings | initializing fallback mode");
 
     } else {
-        console.log("ColorSettings | initializing");
+        console.log("colorsettings | initializing");
     }
 
     window.Ardittristan = window.Ardittristan || {};

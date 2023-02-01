@@ -1,3 +1,5 @@
+import API from "./api.js";
+
 Hooks.once('init', function () {
     game.settings.register("colorsettings", "showWarning", {
         config: true,
@@ -36,10 +38,31 @@ Hooks.once('init', function () {
 
         Hooks.once('ready', function () {
             if (game.settings.get("colorsettings", "showWarning")) {
-                ui.notifications.notify("A module is missing the color picker library. For best results, please install and enable the Lib-Color Settings module.", "warning");
+                ui.notifications.notify("colorsettings | A module is missing the color picker library. For best results, please install and enable the Lib-Color Settings module.", "warning");
             }
         });
-        console.log("ColorSettings | initializing fallback mode");
+        console.log("colorsettings | initializing fallback mode");
 
     }
 });
+
+Hooks.once("setup", async function () {
+  setApi(API)
+});
+
+/**
+ * Initialization helper, to set API.
+ * @param api to set to game module.
+ */
+export function setApi(api) {
+	const data = game.modules.get("colorsettings");
+	data.api = api;
+}
+/**
+ * Returns the set API.
+ * @returns Api from games module.
+ */
+export function getApi() {
+	const data = game.modules.get("colorsettings");
+	return data.api;
+}

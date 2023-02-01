@@ -131,6 +131,42 @@ Example:
 
 When the user clicks the OK button, it puts the color code in the element's value property in hex8 form (eg: `#123456ff`)
 
+## API
+
+```javascript
+  /**
+  * Turn hex rgba into rgba string
+  * @param {String} hex 8 long hex value in string form, eg: "#123456ff"
+  * @returns Array of rgba[r, g, b, a]
+  */
+  game.modules.get("colorsettings").api.hexToRGBA: hexToRGBA(hex) => Array of rgba[r, g, b, a]
+
+  /**
+  * Makes text white or black according to background color
+  * @param {String} rgbaHex 8 long hex value in string form, eg: "#123456ff"
+  * @returns {String} "black" or "white"
+  */
+  game.modules.get("colorsettings").api.getTextColor: getTextColor(rgbaHex) => String
+
+  /**
+   * Convert a Array of rgba[r, g, b, a] in string format to a hex string
+   * @param {String} rgba a Array of rgba[r, g, b, a] as string
+   * @param {boolean} forceRemoveAlpha
+   * @returns turns the hex string
+   */
+  game.modules.get("colorsettings").api.RGBAToHexFromString(rgba, forceRemoveAlpha = false) => String
+
+  /**
+   * Convert a Array of rgba[r, g, b, a] in to a hex string
+   * @param {*} r
+   * @param {*} g
+   * @param {*} b
+   * @param {*} a
+   * @returns the hex string
+   */
+  game.modules.get("colorsettings").api.RGBAToHex(r, g, b, a) => String
+```
+
 ## Changelog
 
 Check the [Changelog](https://github.com/ardittristan/VTTColorSettings/blob/master/CHANGELOG.md)
