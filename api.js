@@ -39,7 +39,7 @@ const API = {
 
   /**
    * Convert a Array of rgba[r, g, b, a] in string format to a hex string
-   * @param {String} rgba a Array of rgba[r, g, b, a] as string
+   * @param {String} rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    * @param {boolean} forceRemoveAlpha
    * @returns turns the hex string
    */
@@ -91,6 +91,9 @@ const API = {
    * Turn hex rgba into rgba string
    * @href https://stackoverflow.com/questions/19799777/how-to-add-transparency-information-to-a-hex-color-code
    * @href https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
+   * @param colorHex
+   * @param alpha 
+   * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    */
   hexToRGBAString(colorHex, alpha = 0.25) {
     let rgba = Color.from(colorHex).toRGBA();
