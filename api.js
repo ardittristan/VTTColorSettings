@@ -96,13 +96,17 @@ const API = {
    * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    */
   hexToRGBAString(colorHex, alpha = 0.25) {
-    let rgba = Color.from(colorHex).toRGBA();
+    let rgba = Color.from(colorHex);
     // return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + alpha + ")";
     if (colorHex.length > 7) {
       rgba = this.hexToRGBA(colorHex);
     } else {
-      const c = Color.from(colorHex);
-      rgba = c.toRGBA();
+      const colorHex2 = `${colorHex}${Math.floor(alpha * 255)
+        .toString(16)
+        .padStart(2, "0")}`;
+        rgba = this.hexToRGBA(colorHex2);
+      // const c = Color.from(colorHex);
+      // rgba = c.toRGBA();
     }
     return "rgba(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ", " + rgba.a ?? alpha + ")";
   }
