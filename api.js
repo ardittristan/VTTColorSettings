@@ -1,23 +1,45 @@
-import { getTextColor, hexToRGBA } from "./colorSetting.js";
-
 const API = {
   /**
-  * Turn hex rgba into rgba string
+  * Turn hex rgba into rgba object
   * @param {String} hex 8 long hex value in string form, eg: "#123456ff"
-  * @returns Array of rgba[r, g, b, a]
+  * @returns object of {r, g, b, a}
   */
-  hexToRGBA: hexToRGBA(hex),
+  hexToRGBA(hex) {
+    const hexArr = hex.slice(1).match(new RegExp(".{2}", "g"));
+    const [r, g, b, a] = hexArr.map((hexStr) => {
+      return parseInt(hexStr.repeat(2 / hexStr.length), 16);
+    });
+    const rgba = [r, g, b, Math.round((a / 256 + Number.EPSILON) * 100) / 100];
+    return {
+      r: rgba[0] ?? 255,
+      g: rgba[1] ?? 255,
+      b: rgba[2] ?? 255,
+      a: rgba[3] ?? 255,
+    };
+  },
 
   /**
   * Makes text white or black according to background color
   * @param {String} rgbaHex 8 long hex value in string form, eg: "#123456ff"
   * @returns {String} "black" or "white"
   */
-  getTextColor: getTextColor(rgbaHex),
+  getTextColor(rgbaHex) {
+    const rgba = this.hexToRGBA(rgbaHex);
+    const brightness = Math.round((
+        (rgba.r * 299) +
+        (rgba.g * 587) +
+        (rgba.b * 114)
+    ) / 1000);
+    if (rgba.a > 0.5) {
+        return (brightness > 125) ? 'black' : 'white';
+    } else {
+        return 'black';
+    }
+  },
 
   /**
    * Convert a Array of rgba[r, g, b, a] in string format to a hex string
-   * @param {String} rgba a Array of rgba[r, g, b, a] as string
+   * @param {String} rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    * @param {boolean} forceRemoveAlpha
    * @returns turns the hex string
    */
@@ -63,6 +85,30 @@ const API = {
       a2 = "0" + a2;
     }
     return "#" + r2 + g2 + b2 + a2;
+  },
+
+  /**
+   * Turn hex rgba into rgba string
+   * @href https://stackoverflow.com/questions/19799777/how-to-add-transparency-information-to-a-hex-color-code
+   * @href https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
+   * @param colorHex
+   * @param alpha
+   * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
+   */
+  hexToRGBAString(colorHex, alpha = 0.25) {
+    let rgba = Color.from(colorHex);
+    // return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + alpha + ")";
+    if (colorHex.length > 7) {
+      rgba = this.hexToRGBA(colorHex);
+    } else {
+      const colorHex2 = `${colorHex}${Math.floor(alpha * 255)
+        .toString(16)
+        .padStart(2, "0")}`;
+        rgba = this.hexToRGBA(colorHex2);
+      // const c = Color.from(colorHex);
+      // rgba = c.toRGBA();
+    }
+    return "rgba(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ", " + rgba.a ?? alpha + ")";
   }
 }
 export default API;

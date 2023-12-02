@@ -1,5 +1,3 @@
-import API from "./api.js";
-
 Hooks.once('init', function () {
     game.settings.register("colorsettings", "showWarning", {
         config: true,
@@ -45,24 +43,3 @@ Hooks.once('init', function () {
 
     }
 });
-
-Hooks.once("setup", async function () {
-  setApi(API)
-});
-
-/**
- * Initialization helper, to set API.
- * @param api to set to game module.
- */
-export function setApi(api) {
-	const data = game.modules.get("colorsettings");
-	data.api = api;
-}
-/**
- * Returns the set API.
- * @returns Api from games module.
- */
-export function getApi() {
-	const data = game.modules.get("colorsettings");
-	return data.api;
-}

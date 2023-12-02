@@ -2,6 +2,7 @@
 
 import Picker from "./lib/vanilla-picker.min.mjs";
 import _html2canvas from './lib/html2canvas.esm.min.js';
+import API from "./api.js";
 /** @type {Html2CanvasStatic} */
 const html2canvas = _html2canvas
 
@@ -270,7 +271,7 @@ class SettingsForm extends FormApplication {
                     game.settings.set(this.module, this.key, color.hex);
                     // set background color of menu
                     element.style.backgroundColor = color.hex;
-                    element.style.color = getTextColor(color.hex);
+                    element.style.color = API.getTextColor(color.hex);
                     element.style.maxWidth = "100%";
                 }
             });
@@ -317,7 +318,7 @@ class colorPickerInput extends HTMLInputElement {
 
         if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
             this.style.backgroundColor = this.value;
-            this.style.color = getTextColor(this.value);
+            this.style.color = API.getTextColor(this.value);
         }
     }
 
@@ -347,7 +348,7 @@ class colorPickerInput extends HTMLInputElement {
             onChange: (color) => {
                 if (this.dataset.responsiveColor !== undefined) {
                     this.style.backgroundColor = color.rgbaString;
-                    this.style.color = getTextColor(color.hex);
+                    this.style.color = API.getTextColor(color.hex);
                 }
                 this.value = color.hex;
 
@@ -406,7 +407,7 @@ class colorPickerButton extends HTMLButtonElement {
 
         if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
             this.style.backgroundColor = this.value;
-            this.style.color = getTextColor(this.value);
+            this.style.color = API.getTextColor(this.value);
         }
     }
 
@@ -436,7 +437,7 @@ class colorPickerButton extends HTMLButtonElement {
             onChange: (color) => {
                 if (this.dataset.responsiveColor !== undefined) {
                     this.style.backgroundColor = color.rgbaString;
-                    this.style.color = getTextColor(color.hex);
+                    this.style.color = API.getTextColor(color.hex);
                 }
                 this.value = color.hex;
 
@@ -495,7 +496,7 @@ async function getEyeDropper(event, _this) {
 
         // rerender canvas for fresh data
         canvas.app.render();
-        let imageCanvas = canvas.app.renderer.plugins.extract.canvas(canvas.stage);
+        let imageCanvas = canvas.app.renderer.extract?.canvas(canvas.stage) ?? canvas.app.renderer.plugins.extract.canvas(canvas.stage);
         let ctx = imageCanvas.getContext('2d');
         let imageData = ctx.getImageData(x, y, 1, 1).data;
         let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
@@ -537,7 +538,7 @@ async function _settingsWatcher(_this) {
         (() => {
             const color = game.settings.get(_this.module, _this.key);
             element.style.backgroundColor = color;
-            element.style.color = getTextColor(color);
+            element.style.color = API.getTextColor(color);
         })();
 
         if (_this.options.insertAfter)
@@ -559,39 +560,6 @@ async function _settingsWatcher(_this) {
             });
         });
     });
-}
-
-// Hex to rgba
-function _convertHexUnitTo256(hexStr) { return parseInt(hexStr.repeat(2 / hexStr.length), 16); };
-
-/**
- * turn hex rgba into rgba string
- * @param {String} hex 8 long hex value in string form, eg: "#123456ff"
- * @returns Array of rgba[r, g, b, a]
- */
-export function hexToRGBA(hex) {
-    const hexArr = hex.slice(1).match(new RegExp(".{2}", "g"));
-    const [r, g, b, a] = hexArr.map(_convertHexUnitTo256);
-    return [r, g, b, Math.round((a / 256 + Number.EPSILON) * 100) / 100];
-}
-
-/**
- * makes text white or black according to background color
- * @param {String} rgbaHex 8 long hex value in string form, eg: "#123456ff"
- * @returns {String} "black" or "white"
- */
-export function getTextColor(rgbaHex) {
-    const rgba = hexToRGBA(rgbaHex);
-    const brightness = Math.round((
-        (rgba[0] * 299) +
-        (rgba[1] * 587) +
-        (rgba[2] * 114)
-    ) / 1000);
-    if (rgba[3] > 0.5) {
-        return (brightness > 125) ? 'black' : 'white';
-    } else {
-        return 'black';
-    }
 }
 
 /**
@@ -672,4 +640,8 @@ Hooks.once('init', function () {
     Hooks.callAll("colorSettingsInitialized", window.Ardittristan.ColorSetting);
 });
 
-
+Hooks.once("setup", async function () {
+    // Setup api
+    const data = game.modules.get("colorsettings");
+    data.api = API;
+});

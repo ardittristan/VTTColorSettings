@@ -135,22 +135,22 @@ When the user clicks the OK button, it puts the color code in the element's valu
 
 ```javascript
   /**
-  * Turn hex rgba into rgba string
+  * Turn hex rgba into rgba object
   * @param {String} hex 8 long hex value in string form, eg: "#123456ff"
-  * @returns Array of rgba[r, g, b, a]
+  * @returns object of {r, g, b, a}
   */
-  game.modules.get("colorsettings").api.hexToRGBA: hexToRGBA(hex) => Array of rgba[r, g, b, a]
+  game.modules.get("colorsettings").api.hexToRGBA: hexToRGBA(hex) => {r, g, b, a}
 
   /**
   * Makes text white or black according to background color
   * @param {String} rgbaHex 8 long hex value in string form, eg: "#123456ff"
   * @returns {String} "black" or "white"
   */
-  game.modules.get("colorsettings").api.getTextColor: getTextColor(rgbaHex) => String
+  game.modules.get("colorsettings").api.getTextColor: getTextColor(rgbaHex) => String "white"|"black"
 
   /**
    * Convert a Array of rgba[r, g, b, a] in string format to a hex string
-   * @param {String} rgba a Array of rgba[r, g, b, a] as string
+   * @param {String} rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    * @param {boolean} forceRemoveAlpha
    * @returns turns the hex string
    */
@@ -165,6 +165,14 @@ When the user clicks the OK button, it puts the color code in the element's valu
    * @returns the hex string
    */
   game.modules.get("colorsettings").api.RGBAToHex(r, g, b, a) => String
+
+  /**
+   * Turn hex rgba into rgba string
+   * @param colorHex
+   * @param alpha 
+   * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
+   */
+   game.modules.get("colorsettings").api.hexToRGBAString(colorHex, alpha = 0.25)
 ```
 
 ## Changelog
