@@ -2,12 +2,12 @@ const API = {
   /**
   * Turn hex rgba into rgba object
   * @param {String} hex 8 long hex value in string form, eg: "#123456ff"
-  * @returns Array of rgba[r, g, b, a]
+  * @returns object of {r, g, b, a}
   */
   hexToRGBA(hex) {
     const hexArr = hex.slice(1).match(new RegExp(".{2}", "g"));
     const [r, g, b, a] = hexArr.map((hexStr) => {
-      return parseInt(hexStr.repeat(2 / hexStr.length), 16); 
+      return parseInt(hexStr.repeat(2 / hexStr.length), 16);
     });
     const rgba = [r, g, b, Math.round((a / 256 + Number.EPSILON) * 100) / 100];
     return {
@@ -92,7 +92,7 @@ const API = {
    * @href https://stackoverflow.com/questions/19799777/how-to-add-transparency-information-to-a-hex-color-code
    * @href https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
    * @param colorHex
-   * @param alpha 
+   * @param alpha
    * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    */
   hexToRGBAString(colorHex, alpha = 0.25) {

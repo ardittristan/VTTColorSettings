@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0
+
+* **Breaking api changes**, now returns a rgba object instead of array.
+* updated external libraries
+
 ## 2.9.0
 
 * update for V10.
