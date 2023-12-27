@@ -172,7 +172,7 @@ When the user clicks the OK button, it puts the color code in the element's valu
    * @param alpha 
    * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    */
-   game.modules.get("colorsettings").api.hexToRGBAString(colorHex, alpha = 0.25)
+   game.modules.get("colorsettings").api.hexToRGBAString(colorHex, alpha = 1)
 ```
 
 ## Changelog
