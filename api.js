@@ -9,7 +9,8 @@ const API = {
     const [r, g, b, a] = hexArr.map((hexStr) => {
       return parseInt(hexStr.repeat(2 / hexStr.length), 16);
     });
-    const rgba = [r, g, b, Math.round((a / 256 + Number.EPSILON) * 100) / 100];
+    const realAlpha = this._isRealNumber(a) ? a : 1;
+    const rgba = [r, g, b, Math.round((realAlpha / 256 + Number.EPSILON) * 100) / 100];
     return {
       r: rgba[0] ?? 255,
       g: rgba[1] ?? 255,
@@ -30,10 +31,12 @@ const API = {
         (rgba.g * 587) +
         (rgba.b * 114)
     ) / 1000);
-    if (rgba.a > 0.5) {
+    // const realAlpha = this._isRealNumber(rgba.a) ? rgba.a : 1;
+    if (this._isRealNumber(rgba.a) && rgba.a > 0.5) {
         return (brightness > 125) ? 'black' : 'white';
     } else {
-        return 'black';
+        //return 'black';
+        return (brightness > 125) ? 'black' : 'white';
     }
   },
 
@@ -95,7 +98,7 @@ const API = {
    * @param alpha
    * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    */
-  hexToRGBAString(colorHex, alpha = 0.25) {
+  hexToRGBAString(colorHex, alpha = 1) {
     let rgba = Color.from(colorHex);
     // return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + alpha + ")";
     if (colorHex.length > 7) {
@@ -108,7 +111,12 @@ const API = {
       // const c = Color.from(colorHex);
       // rgba = c.toRGBA();
     }
-    return "rgba(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ", " + rgba.a ?? alpha + ")";
+    const realAlpha = this._isRealNumber(rgba.a) ? rgba.a : alpha;
+    return "rgba(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ", " + realAlpha + ")";
+  },
+
+  _isRealNumber(inNumber) {
+    return !isNaN(inNumber) && typeof inNumber === "number" && isFinite(inNumber);
   }
 }
 export default API;
