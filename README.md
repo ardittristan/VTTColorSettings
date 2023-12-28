@@ -144,9 +144,10 @@ When the user clicks the OK button, it puts the color code in the element's valu
   /**
   * Makes text white or black according to background color
   * @param {String} rgbaHex 8 long hex value in string form, eg: "#123456ff"
-  * @returns {String} "black" or "white"
+   * @param {number} threshold Contrast threshold to control the resulting font color, float values from 0 to 1. Default is 0.5.
+   * @returns {( '#ffffff'|'#000000')} hex color
   */
-  game.modules.get("colorsettings").api.getTextColor: getTextColor(rgbaHex) => String "white"|"black"
+  game.modules.get("colorsettings").api.getTextColor: getTextColor(rgbaHex, threshold = 0.5) => String "white"|"black"
 
   /**
    * Convert a Array of rgba[r, g, b, a] in string format to a hex string
@@ -173,13 +174,22 @@ When the user clicks the OK button, it puts the color code in the element's valu
    * @return rgba as string e.g. rgba('xxx','xxx','xxx','xxx')
    */
    game.modules.get("colorsettings").api.hexToRGBAString(colorHex, alpha = 1)
+
+  /**
+   * Calculate brightness value by RGB or HEX color.
+   * @param color (String) The color value in RGB or HEX (for example: #000000 || #000 || rgb(0,0,0) || rgba(0,0,0,0))
+   * @returns (Number) The brightness value (dark) 0 ... 255 (light)
+   * @return {number} brigthness
+   */
+   game.modules.get("colorsettings").api.brightnessByColor(colorHexOrRgb):
 ```
 
 ## Changelog
 
-Check the [Changelog](https://github.com/ardittristan/VTTColorSettings/blob/master/CHANGELOG.md)
+Check the [Changelog](/CHANGELOG.md)
 
 ## Libraries used
 
-1. [vanilla-picker](https://github.com/Sphinxxxx/vanilla-picker)
-2. [html2canvas](https://github.com/niklasvh/html2canvas)
+- [vanilla-picker](https://github.com/Sphinxxxx/vanilla-picker) with license [ISC](https://github.com/Sphinxxxx/vanilla-picker/blob/master/LICENSE.md)
+- [html2canvas](https://github.com/niklasvh/html2canvas) with license [MIT](https://github.com/niklasvh/html2canvas/blob/master/LICENSE)
+- [font-color-contrast](https://github.com/russoedu/font-color-contrast) with license [MIT](https://github.com/russoedu/font-color-contrast/blob/master/LICENSE)
