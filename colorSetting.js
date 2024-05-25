@@ -39,6 +39,7 @@ function runInit(moduleName) {
 
     const origGetTemplate = getTemplate;
     const getTemplateWrapper = async function (...args) {
+        const _templateCache = {};
         const path = args[0];
         if (path === "templates/sidebar/apps/settings-config-category.html") {
             if (!_templateCache.hasOwnProperty(path)) {
