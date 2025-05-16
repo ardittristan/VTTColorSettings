@@ -2,7 +2,7 @@
   "title": "lib - Color Settings",
   "name": "colorsettings",
   "description": "Library that allows modules to add color settings and forms.",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "library": true,
   "esmodules": [
     "colorSetting.js"
@@ -48,7 +48,7 @@
     }
   ],
   "minimumCoreVersion": "10",
-	"compatibleCoreVersion": "12",
+  "compatibleCoreVersion": "13",
   "compatibility": {
     "minimum": 10,
     "verified": 11

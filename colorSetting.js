@@ -1,16 +1,43 @@
 // https://github.com/ardittristan/VTTColorSettings
 
 import Picker from "./lib/vanilla-picker.min.mjs";
-import _html2canvas from './lib/html2canvas.esm.min.js';
+import _html2canvas from "./lib/html2canvas.esm.min.js";
 import API from "./api.js";
 /** @type {Html2CanvasStatic} */
-const html2canvas = _html2canvas
+const html2canvas = _html2canvas;
 
 var pickerShown = {};
 var data = {};
+var settingsId = "#client-settings";
 
-function runInit(moduleName) {
+function runInit13 (moduleName) {
+    settingsId = "#settings-config";
 
+    const onOpenSubmenu = foundry.applications.settings.SettingsConfig.DEFAULT_OPTIONS.actions.openSubmenu;
+
+    const onOpenSubmenuWrapper = async function (_event, button) {
+        try {
+            await onOpenSubmenu(_event, button);
+        } catch {
+            const menu = game.settings.menus.get(button.dataset.key);
+            if (!menu) {
+                ui.notifications.error(compatLocalize("colorSettings.menuError", "No submenu found for the provided key"));
+                return;
+            }
+            try {
+                const app = new menu.type(_event);
+                await app.render(true);
+            } catch {
+                const app = new menu.type({ currentTarget: button });
+                await app.render(true);
+            }
+        }
+    };
+
+    foundry.applications.settings.SettingsConfig.DEFAULT_OPTIONS.actions.openSubmenu = onOpenSubmenuWrapper;
+}
+
+function runInit (moduleName) {
     // monkeypatch the onclick event of settings to allow for more settings types
     const onClickSubmenuWrapper = function (event) {
         event.preventDefault();
@@ -27,10 +54,10 @@ function runInit(moduleName) {
 
     if (typeof libWrapper === "function") {
         // If the namespace is the moduleName no need to touch this file
-        if(moduleName && game.modules.get(moduleName)){
-            libWrapper.register(moduleName, 'SettingsConfig.prototype._onClickSubmenu', onClickSubmenuWrapper, 'OVERRIDE');
-        }else{
-            libWrapper.register('colorsettings', 'SettingsConfig.prototype._onClickSubmenu', onClickSubmenuWrapper, 'OVERRIDE');
+        if (moduleName && game.modules.get(moduleName)) {
+            libWrapper.register(moduleName, "SettingsConfig.prototype._onClickSubmenu", onClickSubmenuWrapper, "OVERRIDE");
+        } else {
+            libWrapper.register("colorsettings", "SettingsConfig.prototype._onClickSubmenu", onClickSubmenuWrapper, "OVERRIDE");
         }
     } else {
         // IMPORTANT: most likely to have compatibility issues with other modules
@@ -43,26 +70,25 @@ function runInit(moduleName) {
         const path = args[0];
         if (path === "templates/sidebar/apps/settings-config-category.html") {
             if (!_templateCache.hasOwnProperty(path)) {
-              await new Promise((resolve, reject) => {
-                game.socket.emit("template", path, (resp) => {
-                    if (resp.error) return reject(new Error(resp.error));
-                    // inserted code
-                    let html = parseTemplateHtml(resp.html);
-                    // end inserted code
-                    const compiled = Handlebars.compile(html);
-                    Handlebars.registerPartial(path, compiled);
-                    _templateCache[path] = compiled;
-                    console.log(`Foundry VTT | Retrieved and compiled template ${path}`);
-                    resolve(compiled);
+                await new Promise((resolve, reject) => {
+                    game.socket.emit("template", path, (resp) => {
+                        if (resp.error) return reject(new Error(resp.error));
+                        // inserted code
+                        let html = parseTemplateHtml(resp.html);
+                        // end inserted code
+                        const compiled = Handlebars.compile(html);
+                        Handlebars.registerPartial(path, compiled);
+                        _templateCache[path] = compiled;
+                        console.log(`Foundry VTT | Retrieved and compiled template ${path}`);
+                        resolve(compiled);
+                    });
                 });
-              });
             }
             return _templateCache[path];
-        }
-        else {
+        } else {
             return await origGetTemplate(...args);
         }
-    }
+    };
     getTemplate = getTemplateWrapper;
 }
 
@@ -77,7 +103,7 @@ function parseTemplateHtml (html) {
 }
 
 // register boolean that checks if the initial run has been done or not.
-function registerInitVar() {
+function registerInitVar () {
     if (window.Ardittristan.initialColorSettingRun != undefined) {
         return;
     }
@@ -85,7 +111,7 @@ function registerInitVar() {
 }
 
 // register class that can be called to add a color setting.
-function registerClass() {
+function registerClass () {
     if (window.Ardittristan.ColorSetting) {
         return;
     }
@@ -93,27 +119,24 @@ function registerClass() {
 }
 
 // register text input field
-function registerInput() {
-    if (customElements.get('colorpicker-input') != undefined) {
+function registerInput () {
+    if (customElements.get("colorpicker-input") != undefined) {
         return;
     }
-    customElements.define('colorpicker-input', colorPickerInput, {
-        extends: 'input'
+    customElements.define("colorpicker-input", colorPickerInput, {
+        extends: "input",
     });
 }
 
 // register button picker
-function registerButton() {
-    if (customElements.get('colorpicker-button') != undefined) {
+function registerButton () {
+    if (customElements.get("colorpicker-button") != undefined) {
         return;
     }
-    customElements.define('colorpicker-button', colorPickerButton, {
-        extends: 'button'
+    customElements.define("colorpicker-button", colorPickerButton, {
+        extends: "button",
     });
 }
-
-
-
 
 export default class ColorSetting {
     /**
@@ -137,10 +160,9 @@ export default class ColorSetting {
         // run init
         if (!window.Ardittristan.initialColorSettingRun) {
             const scriptLocation = getRunningScript()();
-            if (!scriptLocation.includes("modules/colorsettings/"))
-                runInit(module);
-            else
-                runInit();
+            if (game?.data?.release?.generation >= 13) runInit13();
+            else if (!scriptLocation.includes("modules/colorsettings/")) runInit(module);
+            else runInit();
             window.Ardittristan.initialColorSettingRun = true;
         }
         this.defaultOptions = {
@@ -164,9 +186,9 @@ export default class ColorSetting {
             hint: this.options.hint,
             name: this.options.name,
             label: this.options.label,
-            icon: 'fas fa-tint',
+            icon: "fas fa-tint",
             type: SettingsForm,
-            restricted: this.options.restricted
+            restricted: this.options.restricted,
         });
 
         // add onchange capability
@@ -174,7 +196,7 @@ export default class ColorSetting {
             scope: this.options.scope,
             config: false,
             default: this.options.defaultColor,
-            type: String
+            type: String,
         };
         if (this.options.onChange != undefined) {
             this.settingsOptions = { ...this.settingsOptions, ...{ onChange: this.options.onChange } };
@@ -189,9 +211,6 @@ export default class ColorSetting {
         pickerShown[`${this.module}.${this.key}`] = false;
     }
 }
-
-
-
 
 class SettingsForm extends FormApplication {
     constructor(event) {
@@ -208,8 +227,8 @@ class SettingsForm extends FormApplication {
     /**
      * @override rendering method into showing a color picker
      */
-    async render() {
-        let x = document.querySelectorAll("#client-settings div.form-group.submenu button");
+    async render () {
+        let x = document.querySelectorAll(settingsId + " div.form-group button");
         for (let element of x) {
             // I hate this, but this is a safeguard for if a different module has a menu with the exact same name
             try {
@@ -217,21 +236,23 @@ class SettingsForm extends FormApplication {
                     // check if picker is already shown
                     if (this._showPicker(element)) {
                         this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
-                        this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
+                        this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."));
                         this.picker._domCancel.onclick = () => {
                             setTimeout(() => {
-                                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
+                                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver";
                                 document.addEventListener("click", this._getEyeDropper, true);
                             }, 50);
                         };
                         // change cancel button name
-                        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-                            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
-                                let faIcon = document.createElement("i");
-                                faIcon.className = "fas fa-eye-dropper";
-                                this.firstChild.prepend(faIcon);
-                            }
-                        });
+                        jQuery(this.picker.domElement)
+                            .find("div.picker_cancel")
+                            .each(function () {
+                                if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
+                                    let faIcon = document.createElement("i");
+                                    faIcon.className = "fas fa-eye-dropper";
+                                    this.firstChild.prepend(faIcon);
+                                }
+                            });
                     }
                 }
             } catch { }
@@ -240,10 +261,10 @@ class SettingsForm extends FormApplication {
     /**
      * @param  {Element} element
      */
-    _showPicker(element) {
+    _showPicker (element) {
         // check if picker is already shown
         if (pickerShown[`${this.module}.${this.key}`]) {
-            let x = document.querySelectorAll("#client-settings div.form-group.submenu button");
+            let x = document.querySelectorAll(settingsId + " div.form-group button");
             for (let pickerElement of x) {
                 try {
                     // hide picker
@@ -274,11 +295,11 @@ class SettingsForm extends FormApplication {
                     element.style.backgroundColor = color.hex;
                     element.style.color = API.getTextColor(color.hex);
                     element.style.maxWidth = "100%";
-                }
+                },
             });
             /** @type {HTMLElement} dom element of picker */
             let pickerElement = this.picker.domElement;
-            if (pickerElement.parentElement.getElementsByClassName('notes')) {
+            if (pickerElement.parentElement.getElementsByClassName("notes")) {
                 // make sure picker gets inserted after menu button
                 jQuery(pickerElement).insertAfter(element);
             }
@@ -289,12 +310,10 @@ class SettingsForm extends FormApplication {
         }
     }
 
-
-    async _getEyeDropper(event) {
+    async _getEyeDropper (event) {
         getEyeDropper(event, this);
     }
 }
-
 // for the html input field
 class colorPickerInput extends HTMLInputElement {
     constructor(...args) {
@@ -304,10 +323,9 @@ class colorPickerInput extends HTMLInputElement {
         this._makePicker = this._makePicker.bind(this);
         this.visible = false;
         // check if picker should be always shown.
-        if (/** @deprecated */this.id === "permanent" || this.dataset.permanent !== undefined) {
+        if (/** @deprecated */ this.id === "permanent" || this.dataset.permanent !== undefined) {
             this._makePicker("picker_inline");
-        }
-        else {
+        } else {
             // on focus
             this.addEventListener("focusin", () => {
                 if (!this.visible) {
@@ -317,13 +335,19 @@ class colorPickerInput extends HTMLInputElement {
             });
         }
 
-        if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+        if (
+            this.dataset.responsiveColor !== undefined &&
+            this.value != undefined &&
+            this.value.length != 0 &&
+            this.value.startsWith("#") &&
+            this.value.match(/[^A-Fa-f0-9#]+/g) == null
+        ) {
             this.style.backgroundColor = this.value;
             this.style.color = API.getTextColor(this.value);
         }
     }
 
-    _makePicker(pickerClass) {
+    _makePicker (pickerClass) {
         /** @type {import('vanilla-picker').default} */
         this.picker = new Picker();
 
@@ -339,12 +363,8 @@ class colorPickerInput extends HTMLInputElement {
             onDone: (color) => {
                 this.picker.destroy();
                 this.visible = false;
-                Hooks.call('pickerDone',
-                    this.parentElement,
-                    color.hex,
-                    this
-                );
-                this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
+                Hooks.call("pickerDone", this.parentElement, color.hex, this);
+                this.dispatchEvent(new CustomEvent("pickerDone", { detail: color }), { bubbles: true });
             },
             onChange: (color) => {
                 if (this.dataset.responsiveColor !== undefined) {
@@ -359,35 +379,36 @@ class colorPickerInput extends HTMLInputElement {
                         this.dispatchEvent(new CustomEvent("pickerChange", { detail: color }), { bubbles: true });
                     }, 300);
                 }
-            }
+            },
         });
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
-            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
+            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."));
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
-                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
+                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver";
                 document.addEventListener("click", this._getEyeDropper, true);
             };
         }
 
-
         jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
 
-        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
-                let faIcon = document.createElement("i");
-                faIcon.className = "fas fa-eye-dropper";
-                this.firstChild.prepend(faIcon);
-            }
-        });
+        jQuery(this.picker.domElement)
+            .find("div.picker_cancel")
+            .each(function () {
+                if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
+                    let faIcon = document.createElement("i");
+                    faIcon.className = "fas fa-eye-dropper";
+                    this.firstChild.prepend(faIcon);
+                }
+            });
     }
 
-    async _getEyeDropper(event) {
+    async _getEyeDropper (event) {
         getEyeDropper(event, this);
     }
-};
+}
 
 class colorPickerButton extends HTMLButtonElement {
     constructor(...args) {
@@ -406,13 +427,19 @@ class colorPickerButton extends HTMLButtonElement {
             }
         });
 
-        if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+        if (
+            this.dataset.responsiveColor !== undefined &&
+            this.value != undefined &&
+            this.value.length != 0 &&
+            this.value.startsWith("#") &&
+            this.value.match(/[^A-Fa-f0-9#]+/g) == null
+        ) {
             this.style.backgroundColor = this.value;
             this.style.color = API.getTextColor(this.value);
         }
     }
 
-    _makePicker() {
+    _makePicker () {
         /** @type {import('vanilla-picker').default} */
         this.picker = new Picker();
 
@@ -428,12 +455,8 @@ class colorPickerButton extends HTMLButtonElement {
             onDone: (color) => {
                 this.picker.destroy();
                 this.visible = false;
-                Hooks.call('pickerDone',
-                    this.parentElement,
-                    color.hex,
-                    this
-                );
-                this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
+                Hooks.call("pickerDone", this.parentElement, color.hex, this);
+                this.dispatchEvent(new CustomEvent("pickerDone", { detail: color }), { bubbles: true });
             },
             onChange: (color) => {
                 if (this.dataset.responsiveColor !== undefined) {
@@ -448,43 +471,43 @@ class colorPickerButton extends HTMLButtonElement {
                         this.dispatchEvent(new CustomEvent("pickerChange", { detail: color }), { bubbles: true });
                     }, 300);
                 }
-            }
+            },
         });
 
         jQuery(this.picker.domElement).insertAfter(this);
 
         if (this.picker._domCancel) {
             this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
-            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
+            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."));
             this.picker._domCancel.style.paddingBottom = 0;
             this.picker._domCancel.style.paddingTop = 0;
             this.picker._domCancel.onclick = () => {
-                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
+                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver";
                 document.addEventListener("click", this._getEyeDropper, true);
             };
         }
 
-        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
-                let faIcon = document.createElement("i");
-                faIcon.className = "fas fa-eye-dropper";
-                this.firstChild.prepend(faIcon);
-            }
-        });
-
+        jQuery(this.picker.domElement)
+            .find("div.picker_cancel")
+            .each(function () {
+                if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
+                    let faIcon = document.createElement("i");
+                    faIcon.className = "fas fa-eye-dropper";
+                    this.firstChild.prepend(faIcon);
+                }
+            });
     }
 
-    async _getEyeDropper(event) {
+    async _getEyeDropper (event) {
         getEyeDropper(event, this);
     }
 }
 
-
-async function getEyeDropper(event, _this) {
+async function getEyeDropper (event, _this) {
     event.preventDefault();
     event.stopPropagation();
     document.removeEventListener("click", _this._getEyeDropper, true);
-    _this.picker._domCancel.style.boxShadow = ""
+    _this.picker._domCancel.style.boxShadow = "";
 
     if (event.target.id === "board" && event.target.nodeName === "CANVAS") {
         // extracted page has different bounds
@@ -498,41 +521,37 @@ async function getEyeDropper(event, _this) {
         // rerender canvas for fresh data
         canvas.app.render();
         let imageCanvas = canvas.app.renderer.extract?.canvas(canvas.stage) ?? canvas.app.renderer.plugins.extract.canvas(canvas.stage);
-        let ctx = imageCanvas.getContext('2d');
+        let ctx = imageCanvas.getContext("2d");
         let imageData = ctx.getImageData(x, y, 1, 1).data;
         let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
 
         _this.picker.setColor(color);
 
         imageCanvas.remove();
-    }
-    else {
-        jQuery('canvas#board')[0].setAttribute("data-html2canvas-ignore", "true");
+    } else {
+        jQuery("canvas#board")[0].setAttribute("data-html2canvas-ignore", "true");
         html2canvas(document.body, {
             useCORS: true,
             removeContainer: true,
-            backgroundColor: 'rgba(0,0,0,0)',
+            backgroundColor: "rgba(0,0,0,0)",
             onclone: (clonedDoc) => {
-                clonedDoc.body.style.setProperty('background-image', 'unset');
-            }
-        })
-            .then(function (htmlCanvas) {
-                let ctx = htmlCanvas.getContext('2d');
-                document.body.appendChild(htmlCanvas);
-                let imageData = ctx.getImageData(event.pageX, event.pageY, 1, 1).data;
-                let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
-                htmlCanvas.remove();
-                _this.picker.setColor(color);
-            });
+                clonedDoc.body.style.setProperty("background-image", "unset");
+            },
+        }).then(function (htmlCanvas) {
+            let ctx = htmlCanvas.getContext("2d");
+            document.body.appendChild(htmlCanvas);
+            let imageData = ctx.getImageData(event.pageX, event.pageY, 1, 1).data;
+            let color = [imageData[0], imageData[1], imageData[2], imageData[3] / 255];
+            htmlCanvas.remove();
+            _this.picker.setColor(color);
+        });
     }
 }
 
-
-
 // settings formatting watcher
-async function _settingsWatcher(_this) {
-    Hooks.on('renderSettingsConfig', (settingsEvent) => {
-        let element = document.querySelector(`#client-settings div.form-group.submenu button[data-key="${_this.module}.${_this.key}"]`);
+async function _settingsWatcher (_this) {
+    Hooks.on("renderSettingsConfig", (settingsEvent) => {
+        let element = document.querySelector(settingsId + ` div.form-group button[data-key="${_this.module}.${_this.key}"]`);
         if (!element) return;
 
         pickerShown = {};
@@ -543,21 +562,22 @@ async function _settingsWatcher(_this) {
         })();
 
         if (_this.options.insertAfter)
-            jQuery(`#client-settings div.form-group.submenu[data-settings-key="${_this.module}.${_this.key}"]`)
-                .insertAfter(jQuery(`#client-settings div.form-group[data-settings-key="${_this.options.insertAfter}"]`));
+            jQuery(settingsId + ` div.form-group[data-settings-key="${_this.module}.${_this.key}"]`).insertAfter(
+                jQuery(settingsId + ` div.form-group[data-settings-key="${_this.options.insertAfter}"]`)
+            );
 
         // check if cancel button is pressed
-        jQuery(settingsEvent.element[0].querySelector("aside button.reset-all")).on('click', () => {
+        jQuery(settingsEvent.element[0].querySelector("aside button.reset-all")).on("click", () => {
             if (window.Ardittristan.resettingSettings == undefined || window.Ardittristan.resettingSettings === false) {
                 window.Ardittristan.resettingSettings = true;
                 ui.notifications.notify(compatLocalize("colorSettings.reset", "Color pickers will reset on save"));
             }
             // check if save button is pressed
             jQuery(settingsEvent.element[0].querySelector("footer button[type=submit]")).on("click", () => {
-              window.Ardittristan.resettingSettings = false;
-              if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
-                game.settings.set(_this.module, _this.key, _this.options.defaultColor);
-              }
+                window.Ardittristan.resettingSettings = false;
+                if (game.settings.get(_this.module, _this.key) != _this.options.defaultColor) {
+                    game.settings.set(_this.module, _this.key, _this.options.defaultColor);
+                }
             });
         });
     });
@@ -566,9 +586,9 @@ async function _settingsWatcher(_this) {
 /**
  * @returns {String} script location
  */
-function getRunningScript() {
+function getRunningScript () {
     return () => {
-        return new Error().stack.match(/([^ \n])*([a-z]*:\/\/\/?)*?[a-z0-9\/\\]*\.js/ig)[0];
+        return new Error().stack.match(/([^ \n])*([a-z]*:\/\/\/?)*?[a-z0-9\/\\]*\.js/gi)[0];
     };
 }
 
@@ -576,21 +596,21 @@ function getRunningScript() {
  * @param  {String} identifier
  * @param  {String} fallback
  */
-function compatLocalize(identifier, fallback) {
-    const translation = game.i18n.localize(identifier)
+function compatLocalize (identifier, fallback) {
+    const translation = game.i18n.localize(identifier);
     if (translation === identifier) {
         return fallback;
     }
     return translation;
 }
 
-Hooks.once('init', function () {
+Hooks.once("init", function () {
     game.settings.register("colorsettings", "showWarning", {
         config: true,
         type: Boolean,
         default: true,
         name: compatLocalize("colorSettings.showError", "Show Error"),
-        hint: compatLocalize("colorSettings.showErrorHint", "Enable or disable error if main module missing.")
+        hint: compatLocalize("colorSettings.showErrorHint", "Enable or disable error if main module missing."),
     });
     /** @type {String} */
     const scriptLocation = getRunningScript()();
@@ -602,33 +622,39 @@ Hooks.once('init', function () {
                 game.settings.register("colorsettings", "autoEnable", {
                     config: false,
                     type: Boolean,
-                    default: true
+                    default: true,
                 });
                 Hooks.once("canvasReady", () => {
                     if (game.user.isGM && game.settings.get("colorsettings", "autoEnable")) {
                         Dialog.confirm({
                             title: compatLocalize("colorSettings.enableDialog", "Enable Color Settings module?"),
-                            content: "<p>" + compatLocalize("colorSettings.enableDialogContent", "You seem to have Color Settings installed already, do you want to enable it?") + "</p>",
-                            yes: () => game.settings.set("core", ModuleManagement.CONFIG_SETTING, {
-                                ...game.settings.get("core", ModuleManagement.CONFIG_SETTING),
-                                ...{ colorsettings: true }
-                            }),
+                            content:
+                                "<p>" + compatLocalize("colorSettings.enableDialogContent", "You seem to have Color Settings installed already, do you want to enable it?") + "</p>",
+                            yes: () =>
+                                game.settings.set("core", ModuleManagement.CONFIG_SETTING, {
+                                    ...game.settings.get("core", ModuleManagement.CONFIG_SETTING),
+                                    ...{ colorsettings: true },
+                                }),
                             no: () => game.settings.set("colorsettings", "autoEnable", false),
-                            defaultYes: false
+                            defaultYes: false,
                         });
-
                     }
                 });
             }
         }
 
-        Hooks.once('ready', function () {
+        Hooks.once("ready", function () {
             if (game.settings.get("colorsettings", "showWarning")) {
-                ui.notifications.notify(compatLocalize("colorSettings.backupWarning", "A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module."), "warning");
+                ui.notifications.notify(
+                    compatLocalize(
+                        "colorSettings.backupWarning",
+                        "A module is running a backup color picker library. For best results, please install  and enable the Lib-Color Settings module."
+                    ),
+                    "warning"
+                );
             }
         });
         console.log("colorsettings | initializing fallback mode");
-
     } else {
         console.log("colorsettings | initializing");
     }
